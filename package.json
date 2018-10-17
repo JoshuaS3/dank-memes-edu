@@ -1,0 +1,14 @@
+{
+  "name": "dank-memes-edu",
+  "version": "0.1.0",
+  "description": "Meme-hosting website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joshua 'joshuas3' Stockin",
+  "license": "GPL 3.0",
+  "dependencies": {
+    "express.js": "^1.0.0"
+  }
+}
