@@ -9,6 +9,7 @@
   "author": "Joshua 'joshuas3' Stockin",
   "license": "GPL 3.0",
   "dependencies": {
-    "express.js": "^1.0.0"
+    "express.js": "^1.0.0",
+    "formidable": "^1.2.1"
   }
 }
