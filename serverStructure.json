@@ -5,14 +5,14 @@
 			{
 				"webAddress": "/",
 				"aliases": ["/home", "/index", "/home.html", "/index.html"],
-				"localResponseFile": "/static/file.html",
+				"localResponseFile": "./static/file.html",
 			}
 		],
 		"apiLogic": [
 			{
 				"webApiAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
-				"logicHandler": "/src/api/v1/media/imageSubmit.js",
+				"logicHandler": "./src/api/v1/media/imageSubmit.js",
 				"acceptedMethod": "POST",
 				"acceptedPayload": [
 					"verToken",
@@ -24,7 +24,7 @@
 			{
 				"webApiAddress": "/api/v1/media/image",
 				"aliases": ["/image", "/api/media/image"],
-				"logicHandler": "/src/api/media/imageFetch.js",
+				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET",
 				"acceptedPayload": [
 					"imageHash"
@@ -33,7 +33,7 @@
 			{
 				"webApiAddress": "/api/v1/media/list",
 				"aliases": ["/api/media/list"],
-				"logicHandler": "/src/api/v1/media/list.js",
+				"logicHandler": "./src/api/v1/media/list.js",
 				"acceptedMethod": "GET",
 				"acceptedPayload": [
 					"count"
