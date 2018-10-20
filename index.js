@@ -1,67 +1,85 @@
 console.log("Entry point");
 
-const fs = require("fs");
-const path = require("path");
-const formidable = require('formidable');
+console.log("Acquiring necessary modules");
 const http = require("http");
+const fs = require("fs");
 
-console.log("Constants acquired");
-console.log("Starting app...");
+console.log("Loading server structure");
+const serverStructure = require("./serverStructure.json");
 
-http.createServer(function (req, res) {
-	if (req.url == "/submit_meme" && req.method == 'POST') {
-		var form = new formidable.IncomingForm();
-		form.parse(req, function (err, fields, files) {
-			var oldpath = files.filetoupload.path;
-			var newpath = path.join(__dirname, path.join('files', files.filetoupload.name));
-			fs.createReadStream(oldpath).pipe(fs.createWriteStream(newpath));
-			res.writeHead(302, {"Location": "/"});
-			return res.end();
+serverStructure.forEach(function (serverData) {
+	function serverFunction(request, response) {
+		canSendResponse = false;
+
+		// Logic for API endpoints
+		serverData.apiLogic.forEach(function (apiPage) {
+
+			// if the requested URL is listed in the serverStructure model
+			if (request.url == apiPage.webApiAddress || request.url == apiPage.aliases.indexOf(request.url) > -1) {
+
+				// if the request type is accepted
+				if (request.method == apiPage.acceptedMethod) {
+
+					// check for a proper payload
+					improperPayload = false;
+					apiPage.acceptedPayload.forEach(function (acceptedPayloadKey) {
+						if (request.headers.indexOf(acceptedPayload) == -1) {
+							improperPayload = true;
+							return;
+						}
+					});
+					if (improperPayload) { // payload is improper, send 400 error
+						response.writeHead(400, {'Content-Type': 'text/html'});
+						response.write("Error 400 (Bad Request)"); // TO DO: Create proper error diagnosis structure, send JSON back
+						canSendResponse = true;
+						return;
+					}
+
+					htmlCode, contentType, apiResponse = require(apiPage.logicHandler)(request, response); // pass the request to the proper endpoint handler
+
+					// write the response given by the handler
+					response.writeHead(htmlCode, contentType);
+					response.write(apiResponse);
+					canSendResponse = true;
+					return;
+				} else { // request type is not the right one
+					response.writeHead(400, {'Content-Type': 'text/html'}); // TO DO: Check serverData.apiLogic members to make sure there's not another of the same URL with diff HTTP method
+					response.write("Error 400 (Bad Request)");
+					canSendResponse = true;
+					return;
+				}
+			}
 		});
-	}
-	else if (req.url.startsWith("/files/"))
-	{
-		filename = req.url.split("/files/")[1];
-		filepath = path.join(__dirname, path.join('files', filename));
-		res.writeHead(200, {'Content-Type': 'image/plain'});
-		return res.end(fs.readFileSync(filepath), 'binary');
-	}
-	else
-	{
-		res.writeHead(200, {'Content-Type': 'text/html'});
-		fs.readFileSync('./static/start.html').toString().split('\n').forEach(function (line) {
-			res.write(line);
-		})
+		if (canSendResponse) {
+			return response.end();
+		}
 
-		var dir = path.join(__dirname, 'files');
-
-		fs.readdir(dir, function(err, files){
-			files = files.map(function (fileName) {
-				return {
-					name: fileName,
-					time: fs.statSync(dir + '/' + fileName).mtime.getTime()
-				};
-			})
-			.sort(function (a, b) {
-				return b.time - a.time; })
-			.map(function (v) {
-				return v.name; });
-
-			count = 0;
-			files.forEach(function (file) {
-				if (count++ >= 20) return;
-				res.write('<div class="shadow-lg p-3 mb-2 mt-4">');
-				res.write('<img class="d-block img-fluid w-100" src="/files/' + file + '"/>');
-				res.write('</div>');
-			});
-
-			fs.readFileSync('./static/end.html').toString().split('\n').forEach(function (line) {
-				res.write(line);
-			})
-
-			return res.end();
+		serverData.staticServing.forEach(function (staticPage) {
+			if (request.url == staticPage.webAddress || request.url == staticPage.aliases.indexOf(request.url) > -1) {
+				fs.readFileSync(staticPage.localResponseFile).toString().split('\n').forEach(function (line) {
+					// TO DO
+				})
+			}
 		});
-	}
-}).listen(80);
+		if (canSendResponse) {
+			return response.end();
+		}
 
-console.log("App listening at port 80");
+
+		if (!canSendResponse) {
+			response.writeHead(404, {'Content-Type': 'text/html'});
+			response.write("Error 404");
+			return response.end();
+		} else {
+			response.writeHead(500, {'Content-Type': 'text/html'});
+			response.write("Error 500 (Internal Server Error)");
+			return response.end();
+		}
+	}
+	newHttpServer = http.createServer(serverFunction);
+	serverData.activePorts.forEach(function (port) {
+		newHttpServer.listen(port);
+		console.log("Listening on port " + port);
+	});
+});
+
