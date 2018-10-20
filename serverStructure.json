@@ -27,7 +27,7 @@
 				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET",
 				"acceptedPayload": [
-					"h" // `/image?h=912EC803B2CE49E4A541068D495AB570`
+					"h"
 				]
 			},
 			{
