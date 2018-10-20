@@ -1,27 +1,35 @@
 console.log("Entry point");
+// TO DO: Proper logging
+// `Logger.i(String tag, String message, [Exception e])`
+// `Logger.log(Logger.Severity.INFO, String tag, String message, [Exception e])`
+// I=Info, W=Warning, V=Verbose
 
 console.log("Acquiring necessary modules");
 const http = require("http");
 const fs = require("fs");
+const path = require("path");
+const responseSetting = require("./src/responseSetting.js");
 
 console.log("Loading server structure");
 const serverStructure = require("./serverStructure.json");
 
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
-		canSendResponse = false;
+		let canSendResponse = false;
 
 		// Logic for API endpoints
 		serverData.apiLogic.forEach(function (apiPage) {
 
+			if (canSendResponse) return;
+
 			// if the requested URL is listed in the serverStructure model
-			if (request.url == apiPage.webApiAddress || request.url == apiPage.aliases.indexOf(request.url) > -1) {
+			if (request.url == apiPage.webApiAddress || apiPage.aliases.indexOf(request.url) > -1) {
 
 				// if the request type is accepted
 				if (request.method == apiPage.acceptedMethod) {
 
 					// check for a proper payload
-					improperPayload = false;
+					let improperPayload = false;
 					apiPage.acceptedPayload.forEach(function (acceptedPayloadKey) {
 						if (request.headers.indexOf(acceptedPayload) == -1) {
 							improperPayload = true;
@@ -29,24 +37,37 @@ serverStructure.forEach(function (serverData) {
 						}
 					});
 					if (improperPayload) { // payload is improper, send 400 error
-						response.writeHead(400, {'Content-Type': 'text/html'});
-						response.write("Error 400 (Bad Request)"); // TO DO: Create proper error diagnosis structure, send JSON back
+						responseSetting.setResponseFullHTML(response, 400); // TO DO: Create proper error diagnosis structure, send JSON back
 						canSendResponse = true;
 						return;
 					}
 
-					htmlCode, contentType, apiResponse = require(apiPage.logicHandler)(request, response); // pass the request to the proper endpoint handler
+					let htmlCode, contentType, apiResponse = require(apiPage.logicHandler)(request, response); // pass the request to the proper endpoint handler
 
 					// write the response given by the handler
-					response.writeHead(htmlCode, contentType);
+					responseSetting.setResponseHeader(response, htmlCode, contentType);
 					response.write(apiResponse);
 					canSendResponse = true;
 					return;
 				} else { // request type is not the right one
-					response.writeHead(400, {'Content-Type': 'text/html'}); // TO DO: Check serverData.apiLogic members to make sure there's not another of the same URL with diff HTTP method
-					response.write("Error 400 (Bad Request)");
-					canSendResponse = true;
-					return;
+					let anotherUniteratedRequestTypeExists = false;
+					serverData.apiLogic.forEach(function (possibleDuplicateApiPage) { // iterate through the API pages again to find a potential match
+						if (anotherUniteratedRequestTypeExists) return;
+
+						if (possibleDuplicateApiPage != apiPage) { // make sure it's not the current one
+							if (request.url == possibleDuplicateApiPage.webApiAddress || possibleDuplicateApiPage.aliases.indexOf(request.url) > -1) { // if there's a match
+								if (serverData.apiLogic.indexOf(possibleDuplicateApiPage) > serverData.apiLogic.indexOf(apiPage)) { // make sure it's not already been iterated through
+									anotherUniteratedRequestTypeExists = true;
+									return;
+								}
+							}
+						}
+					});
+					if (!anotherUniteratedRequestTypeExists) {
+						responseSetting.setResponseFullHTML(response, 400);
+						canSendResponse = true;
+						return;
+					}
 				}
 			}
 		});
@@ -55,10 +76,17 @@ serverStructure.forEach(function (serverData) {
 		}
 
 		serverData.staticServing.forEach(function (staticPage) {
-			if (request.url == staticPage.webAddress || request.url == staticPage.aliases.indexOf(request.url) > -1) {
-				fs.readFileSync(staticPage.localResponseFile).toString().split('\n').forEach(function (line) {
-					// TO DO
-				})
+						if (canSendResponse) return;
+
+			if (request.url == staticPage.webAddress || staticPage.aliases.indexOf(request.url) > -1) { // requested URL
+
+				let staticPath = path.join(__dirname, staticPage.localResponseFile);
+				if (fs.existsSync(staticPath)) {
+					let staticPageContent = fs.readFileSync(staticPage.localResponseFile).toString();
+					responseSetting.setResponseHeader(response, 200, 'text/html');
+					response.write(staticPageContent);
+					canSendResponse = true;
+				}
 			}
 		});
 		if (canSendResponse) {
@@ -66,18 +94,16 @@ serverStructure.forEach(function (serverData) {
 		}
 
 
-		if (!canSendResponse) {
-			response.writeHead(404, {'Content-Type': 'text/html'});
-			response.write("Error 404");
+		if (!canSendResponse) { // none of the iterated pages matches the request URL, 404 not found
+			responseSetting.setResponseFullHTML(response, 404);
 			return response.end();
-		} else {
-			response.writeHead(500, {'Content-Type': 'text/html'});
-			response.write("Error 500 (Internal Server Error)");
+		} else { // error handling; it is said that a response can be sent but it hasn't already
+			responseSetting.setResponseFullHTML(response, 500);
 			return response.end();
 		}
 	}
-	newHttpServer = http.createServer(serverFunction);
 	serverData.activePorts.forEach(function (port) {
+		newHttpServer = http.createServer(serverFunction);
 		newHttpServer.listen(port);
 		console.log("Listening on port " + port);
 	});
