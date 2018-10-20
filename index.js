@@ -19,7 +19,6 @@ serverStructure.forEach(function (serverData) {
 		let canSendResponse = false;
 		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
 		let truncatedUrl = request.url.split("?")[0];
-		console.log(fullHeaders);
 
 		// Logic for API endpoints
 		serverData.apiLogic.forEach(function (apiPage) {
