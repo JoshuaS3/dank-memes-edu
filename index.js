@@ -8,6 +8,7 @@ console.log("Acquiring necessary modules");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const urlLib = require("url");
 const responseSetting = require("./src/responseSetting.js");
 
 console.log("Loading server structure");
@@ -16,6 +17,9 @@ const serverStructure = require("./serverStructure.json");
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
 		let canSendResponse = false;
+		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
+		let truncatedUrl = request.url.split("?")[0];
+		console.log(fullHeaders);
 
 		// Logic for API endpoints
 		serverData.apiLogic.forEach(function (apiPage) {
@@ -23,7 +27,7 @@ serverStructure.forEach(function (serverData) {
 			if (canSendResponse) return;
 
 			// if the requested URL is listed in the serverStructure model
-			if (request.url == apiPage.webApiAddress || apiPage.aliases.indexOf(request.url) > -1) {
+			if (truncatedUrl == apiPage.webApiAddress || apiPage.aliases.indexOf(truncatedUrl) > -1) {
 
 				// if the request type is accepted
 				if (request.method == apiPage.acceptedMethod) {
@@ -31,7 +35,7 @@ serverStructure.forEach(function (serverData) {
 					// check for a proper payload
 					let improperPayload = false;
 					apiPage.acceptedPayload.forEach(function (acceptedPayloadKey) {
-						if (request.headers.indexOf(acceptedPayload) == -1) {
+						if (fullHeaders[acceptedPayloadKey] == null) {
 							improperPayload = true;
 							return;
 						}
@@ -42,7 +46,7 @@ serverStructure.forEach(function (serverData) {
 						return;
 					}
 
-					let htmlCode, contentType, apiResponse = require(apiPage.logicHandler)(request, response); // pass the request to the proper endpoint handler
+					let htmlCode, contentType, apiResponse = require(apiPage.logicHandler)(request, fullHeaders, response); // pass the request to the proper endpoint handler
 
 					// write the response given by the handler
 					responseSetting.setResponseHeader(response, htmlCode, contentType);
@@ -55,7 +59,7 @@ serverStructure.forEach(function (serverData) {
 						if (anotherUniteratedRequestTypeExists) return;
 
 						if (possibleDuplicateApiPage != apiPage) { // make sure it's not the current one
-							if (request.url == possibleDuplicateApiPage.webApiAddress || possibleDuplicateApiPage.aliases.indexOf(request.url) > -1) { // if there's a match
+							if (truncatedUrl == possibleDuplicateApiPage.webApiAddress || possibleDuplicateApiPage.aliases.indexOf(truncatedUrl) > -1) { // if there's a match
 								if (serverData.apiLogic.indexOf(possibleDuplicateApiPage) > serverData.apiLogic.indexOf(apiPage)) { // make sure it's not already been iterated through
 									anotherUniteratedRequestTypeExists = true;
 									return;
@@ -78,10 +82,10 @@ serverStructure.forEach(function (serverData) {
 		serverData.staticServing.forEach(function (staticPage) {
 						if (canSendResponse) return;
 
-			if (request.url == staticPage.webAddress || staticPage.aliases.indexOf(request.url) > -1) { // requested URL
+			if (truncatedUrl == staticPage.webAddress || staticPage.aliases.indexOf(truncatedUrl) > -1) { // requested URL
 
 				let staticPath = path.join(__dirname, staticPage.localResponseFile);
-				if (fs.existsSync(staticPath)) {
+				if (fs.existsSync(staticPath)) { // if the file exists
 					let staticPageContent = fs.readFileSync(staticPage.localResponseFile).toString();
 					responseSetting.setResponseHeader(response, 200, 'text/html');
 					response.write(staticPageContent);
