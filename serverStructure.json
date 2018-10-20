@@ -5,7 +5,7 @@
 			{
 				"webAddress": "/",
 				"aliases": ["/home", "/index", "/home.html", "/index.html"],
-				"localResponseFile": "./static/file.html",
+				"localResponseFile": "static/sample_page.html"
 			}
 		],
 		"apiLogic": [
@@ -27,7 +27,7 @@
 				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET",
 				"acceptedPayload": [
-					"imageHash"
+					"h" // `/image?h=912EC803B2CE49E4A541068D495AB570`
 				]
 			},
 			{
