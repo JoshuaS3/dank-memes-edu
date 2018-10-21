@@ -12,19 +12,15 @@
 			{
 				"webApiAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
-				"logicHandler": "./src/api/v1/media/imageSubmit.js",
+				"logicHandler": "./src/api/media/imageSubmit.js",
 				"acceptedMethod": "POST",
 				"acceptedPayload": [
-					"verToken",
-					"userID",
-					"imageType",
-					"image"
 				]
 			},
 			{
 				"webApiAddress": "/api/v1/media/image",
 				"aliases": ["/image", "/api/media/image"],
-				"logicHandler": "./src/api/media/imageFetch.js",
+				"logicHandler": "./src/api/media/imageFetch",
 				"acceptedMethod": "GET",
 				"acceptedPayload": [
 					"h"
@@ -33,7 +29,7 @@
 			{
 				"webApiAddress": "/api/v1/media/list",
 				"aliases": ["/api/media/list"],
-				"logicHandler": "./src/api/v1/media/list.js",
+				"logicHandler": "./src/api/media/list.js",
 				"acceptedMethod": "GET",
 				"acceptedPayload": [
 					"count"
