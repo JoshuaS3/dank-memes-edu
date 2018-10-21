@@ -95,7 +95,7 @@ serverStructure.forEach(function (serverData) {
 		}
 
 		serverData.staticServing.forEach(function (staticPage) {
-						if (canSendResponse) return;
+			if (canSendResponse) return;
 
 			if (truncatedUrl == staticPage.webAddress || staticPage.aliases.indexOf(truncatedUrl) > -1) { // requested URL
 
