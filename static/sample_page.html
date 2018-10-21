@@ -37,27 +37,30 @@
 				</button>
 			</div>
 		</div>
-		<div class="container" id="list">
-			<form action="/api/media/image" method="post" enctype="multipart/form-data">
-				<div class="form-group">
-					<label for="exampleFormControlFile1">Upload a file to dankmemes.edu</label>
-					<input type="file" class="form-control-file" id="exampleFormControlFile1" name="filetoupload">
-					<input type="submit" class="form-control-submit"></input>
-				</div>
-			</form>
-			<script type="text/javascript">
-				$(document).ready(function(){
-					let result = $.getJSON('/api/media/list?count=20', null, function(data) {
+		<div class="container mb-4">
+			<div class="row justify-content-center">
+				<div class="col-8" id="list">
+					<form action="/api/media/image" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="exampleFormControlFile1">Upload a file to dankmemes.edu</label>
+							<input type="file" class="form-control-file" id="exampleFormControlFile1" name="filetoupload">
+							<input type="submit" class="form-control-submit"></input>
+						</div>
+					</form>
+					<script type="text/javascript">
+						$(document).ready(function(){
+							let result = $.getJSON('/api/media/list?count=20', null, function(data) {
 
-						for (var i in data) {
-							let hash = data[i];
-							let hashUrl = '/image?h=' + hash;
-							$("#list").append('<div class="shadow-lg p-3 mb-2 mt-4"><img class="d-block img-fluid w-100" src="' + hashUrl + '"/></div>')
-						}
-					});
-				});
-			</script>
-			
+								for (var i in data) {
+									let hash = data[i];
+									let hashUrl = '/image?h=' + hash;
+									$("#list").append('<div class="shadow-lg p-3 mb-2 mt-4"><img class="d-block img-fluid w-100" src="' + hashUrl + '"/></div>')
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
