@@ -37,16 +37,8 @@
 				</button>
 			</div>
 		</div>
-		<div class="alert alert-secondary alert-dismissible fade show" role="alert">
-			<div class="container">
-				don't fucking ask me if it works, if you see this message it does
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-		</div>
 		<div class="container">
-			<form action="submit_meme" method="post" enctype="multipart/form-data">
+			<form action="/api/media/image" method="post" enctype="multipart/form-data">
 				<div class="form-group">
 					<label for="exampleFormControlFile1">Upload a file to dankmemes.edu</label>
 					<input type="file" class="form-control-file" id="exampleFormControlFile1" name="filetoupload">
