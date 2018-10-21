@@ -63,12 +63,12 @@ module.exports = function (request, headers, response, mySQLconnection) {
 								response.end();
 								return true;
 							}
-							response.writeHead(302, {'Location': '/image?h=' + hashedImage});
+							response.writeHead(302, {'Location': '/'});
 							response.end();
 							return true;
 						});
 					} else {
-						response.writeHead(302, {'Location': '/image?h=' + hashedImage});
+						response.writeHead(302, {'Location': '/'});
 						response.end();
 					}
 				});
