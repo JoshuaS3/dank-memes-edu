@@ -24,13 +24,25 @@ serverStructure.forEach(function (serverData) {
 });
 
 console.log("Establishing MySQL connection");
-var mySQLconnection = mysql.createConnection(mySqlConfig);
-mySQLconnection.connect(function (err) {
-	if (err) {
-		console.log("Error when establishing MySQL connection");
-		throw err;
-	}
-});
+var mySQLconnection;
+function handleMySqlConnectionLoss() {
+	mySQLconnection = mysql.createConnection(mySqlConfig);
+
+	mySQLconnection.connect(function (err) {
+		if (err) {
+			console.log("Error when establishing MySQL connection: ", err);
+			setTimeout(handleMySqlConnectionLoss, 2000);
+		}
+	});
+	mySQLconnection.on('error', function(err){
+		if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+			handleMySqlConnectionLoss();
+		} else {
+			throw err;
+		}
+	});
+}
+handleMySqlConnectionLoss();
 
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
