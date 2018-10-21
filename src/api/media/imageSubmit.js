@@ -40,23 +40,37 @@ module.exports = function (request, headers, response, mySQLconnection) {
 					return true;
 				}
 				let hashedImage = md5(imageBuffer.toString('hex'));
-				let query = "INSERT INTO `joshuas3`.`images` SET ?"
-				let values = {
-					id: hashedImage,
-					image: imageBuffer,
-					mime: files[file].type
-				}
-				mySQLconnection.query(query, values, function(err, da) {
+
+				let checkQuery = "SELECT * FROM `joshuas3`.`images` WHERE id = ? ";
+				mySQLconnection.query(checkQuery, [hashedImage], function(err, result) {
 					if (err) {
 						let htmlCode = 500;
 						responseSetting.setResponseFullHTML(response, htmlCode);
 						response.end();
 						return true;
 					}
-					let htmlCode = 200;
-					responseSetting.setResponseFullHTML(response, htmlCode);
-					response.end();
-					return true;
+					if (result == '') {
+						let query = "INSERT INTO `joshuas3`.`images` SET ?"
+						let values = {
+							id: hashedImage,
+							image: imageBuffer,
+							mime: files[file].type
+						}
+						mySQLconnection.query(query, values, function(err, da) {
+							if (err) {
+								let htmlCode = 500;
+								responseSetting.setResponseFullHTML(response, htmlCode);
+								response.end();
+								return true;
+							}
+							response.writeHead(302, {'Location': '/image?h=' + hashedImage});
+							response.end();
+							return true;
+						});
+					} else {
+						response.writeHead(302, {'Location': '/image?h=' + hashedImage});
+						response.end();
+					}
 				});
 			})
 		};
