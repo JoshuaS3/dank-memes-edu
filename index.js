@@ -9,10 +9,28 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const urlLib = require("url");
+const mysql = require("mysql");
 const responseSetting = require("./src/responseSetting.js");
+const mySqlConfig = require("./mySqlConfig.json");
 
 console.log("Loading server structure");
 const serverStructure = require("./serverStructure.json");
+
+console.log("Requiring API endpoints");
+serverStructure.forEach(function (serverData) {
+	serverData.apiLogic.forEach(function (apiPage) {
+		apiPage.logicHandler = require(apiPage.logicHandler); // require the API endpoint logic handlers before use
+	});
+});
+
+console.log("Establishing MySQL connection");
+var mySQLconnection = mysql.createConnection(mySqlConfig);
+mySQLconnection.connect(function (err) {
+	if (err) {
+		console.log("Error when establishing MySQL connection");
+		throw err;
+	}
+});
 
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
@@ -30,7 +48,7 @@ serverStructure.forEach(function (serverData) {
 
 				// if the request type is accepted
 				if (request.method == apiPage.acceptedMethod) {
-
+					
 					// check for a proper payload
 					let improperPayload = false;
 					apiPage.acceptedPayload.forEach(function (acceptedPayloadKey) {
@@ -42,14 +60,11 @@ serverStructure.forEach(function (serverData) {
 					if (improperPayload) { // payload is improper, send 400 error
 						responseSetting.setResponseFullHTML(response, 400); // TO DO: Create proper error diagnosis structure, send JSON back
 						canSendResponse = true;
+						response.end()
 						return;
 					}
 
-					let htmlCode, contentType, apiResponse = require(apiPage.logicHandler)(request, fullHeaders, response); // pass the request to the proper endpoint handler
-
-					// write the response given by the handler
-					responseSetting.setResponseHeader(response, htmlCode, contentType);
-					response.write(apiResponse);
+					apiPage.logicHandler(request, fullHeaders, response, mySQLconnection); // pass the request to the proper endpoint handler, always returns true
 					canSendResponse = true;
 					return;
 				} else { // request type is not the right one
@@ -69,13 +84,14 @@ serverStructure.forEach(function (serverData) {
 					if (!anotherUniteratedRequestTypeExists) {
 						responseSetting.setResponseFullHTML(response, 400);
 						canSendResponse = true;
+						response.end()
 						return;
 					}
 				}
 			}
 		});
 		if (canSendResponse) {
-			return response.end();
+			return;
 		}
 
 		serverData.staticServing.forEach(function (staticPage) {
