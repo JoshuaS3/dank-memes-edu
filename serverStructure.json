@@ -1,6 +1,6 @@
 [
 	{
-		"activePorts": [80, 8080],
+		"activePorts": [8080],
 		"staticServing": [
 			{
 				"webAddress": "/",
@@ -25,7 +25,7 @@
 			{
 				"webApiAddress": "/api/v1/media/image",
 				"aliases": ["/image", "/api/media/image"],
-				"logicHandler": "./src/api/media/imageFetch",
+				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET",
 				"requiredPayload": [
 					"h"
