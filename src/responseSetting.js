@@ -22,10 +22,12 @@ module.exports.setResponseHeaderJSON = function(response, code) {
 };
 module.exports.setResponseFullJSON = function(response, code, data) {
 	response.writeHead(code, {"Content-Type": "application/json"});
-	response.write(data);
+	response.write(JSON.stringify(data));
+	response.end();
 };
 module.exports.setResponseFullHTML = function(response, code) {
 	response.writeHead(code, {"Content-Type": "text/html"});
 	response.write(code.toString() + " - " + (httpCodes[code.toString()] ? httpCodes[code.toString()] : "UNKNOWN ERROR"));
+	response.end();
 };
 

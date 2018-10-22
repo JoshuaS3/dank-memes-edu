@@ -5,7 +5,12 @@
 			{
 				"webAddress": "/",
 				"aliases": ["/home", "/index", "/home.html", "/index.html"],
-				"localResponseFile": "static/sample_page.html"
+				"localResponseFile": "static/index.html",
+				"fileSplit": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
 			}
 		],
 		"apiLogic": [
@@ -14,27 +19,67 @@
 				"aliases": ["/api/media/image"],
 				"logicHandler": "./src/api/media/imageSubmit.js",
 				"acceptedMethod": "POST",
-				"acceptedPayload": [
-				]
+				"requiredPayload": [],
+				"optionalPayload": []
 			},
 			{
 				"webApiAddress": "/api/v1/media/image",
 				"aliases": ["/image", "/api/media/image"],
 				"logicHandler": "./src/api/media/imageFetch",
 				"acceptedMethod": "GET",
-				"acceptedPayload": [
+				"requiredPayload": [
 					"h"
-				]
+				],
+				"optionalPayload": []
 			},
 			{
 				"webApiAddress": "/api/v1/media/list",
 				"aliases": ["/api/media/list"],
 				"logicHandler": "./src/api/media/list.js",
 				"acceptedMethod": "GET",
-				"acceptedPayload": [
+				"requiredPayload": [],
+				"optionalPayload": [
 					"count"
 				]
+			},
+
+
+			{
+				"webApiAddress": "/api/v1/alerts/create",
+				"aliases": ["/api/alerts/create"],
+				"logicHandler": "./src/api/alerts/create.js",
+				"acceptedMethod": "POST",
+				"requiredPayload": [
+					"content"
+				],
+				"optionalPayload": [
+					"severity",
+					"expirationDate"
+				]
+			},
+			{
+				"webApiAddress": "/api/v1/alerts/delete",
+				"aliases": ["/api/alerts/delete"],
+				"logicHandler": "./src/api/alerts/delete.js",
+				"acceptedMethod": "DELETE",
+				"requiredPayload": [
+					"id"
+				]
+			},
+			{
+				"webApiAddress": "/api/v1/alerts/list",
+				"aliases": ["/api/alerts/list"],
+				"logicHandler": "./src/api/alerts/list.js",
+				"acceptedMethod": "GET",
+				"requiredPayload": [],
+				"optionalPayload": []
 			}
+
+
+
+
+
+
 		]
 	}
 ]

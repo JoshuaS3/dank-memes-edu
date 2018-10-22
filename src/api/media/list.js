@@ -1,36 +1,34 @@
 const responseSetting = require("../../responseSetting.js");
+const mySQLconnection = require("../../mySQLconnection.js");
 
-module.exports = function(request, headers, response, mySQLconnection) {
-	let count = parseInt(headers['count']);
+module.exports = function(request, fullHeaders, response, responseJSON) {
+	let count = parseInt(fullHeaders['count']);
 	if (count.toString() == 'NaN') {
-		let htmlCode = 400;
-		responseSetting.setResponseFullHTML(response, htmlCode);
-		response.end();
-		return true;
+		count = 10;
 	}
 	if (count > 100) {
-		let htmlCode = 400;
-		responseSetting.setResponseFullHTML(response, htmlCode);
-		response.end();
-		return true;
+		count = 100;
+		responseJSON.message = "Response limited to 100 results";
 	}
 
 	let query = "SELECT * FROM joshuas3.images ORDER BY dateAdded DESC LIMIT ?"
 	mySQLconnection.query(query, [count], function(err, results) {
 		if (err) {
-			let htmlCode = 400;
-			responseSetting.setResponseFullHTML(response, htmlCode);
-			response.end();
+			responseJSON.status = "error";
+			responseJSON.message = err.toString();
+			responseJSON.code = 400;
+			responseSetting.setResponseFullJSON(response, 400, responseJSON);
 			return true;
 		}
 		let listOfIds = [];
 		results.forEach(function (row) {
 			listOfIds.push(row.id);
 		});
+		responseJSON.status = "success";
+		responseJSON.code = 200;
+		responseJSON.data.ids = listOfIds;
 
-		response.writeHead(200, 'application/json');
-		response.write(JSON.stringify(listOfIds));
-		response.end();
+		responseSetting.setResponseFullJSON(response, 200, responseJSON);
 		return true;
 	});
 }

@@ -11,7 +11,6 @@ const path = require("path");
 const urlLib = require("url");
 const mysql = require("mysql");
 const responseSetting = require("./src/responseSetting.js");
-const mySqlConfig = require("./mySqlConfig.json");
 
 console.log("Loading server structure");
 const serverStructure = require("./serverStructure.json");
@@ -24,25 +23,7 @@ serverStructure.forEach(function (serverData) {
 });
 
 console.log("Establishing MySQL connection");
-var mySQLconnection;
-function handleMySqlConnectionLoss() {
-	mySQLconnection = mysql.createConnection(mySqlConfig);
-
-	mySQLconnection.connect(function (err) {
-		if (err) {
-			console.log("Error when establishing MySQL connection: ", err);
-			setTimeout(handleMySqlConnectionLoss, 2000);
-		}
-	});
-	mySQLconnection.on('error', function(err){
-		if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-			handleMySqlConnectionLoss();
-		} else {
-			throw err;
-		}
-	});
-}
-handleMySqlConnectionLoss();
+const mySQLconnection = require("./src/mySQLconnection.js");
 
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
@@ -57,26 +38,31 @@ serverStructure.forEach(function (serverData) {
 
 			// if the requested URL is listed in the serverStructure model
 			if (truncatedUrl == apiPage.webApiAddress || apiPage.aliases.indexOf(truncatedUrl) > -1) {
+				let responseJSON = {};
+				responseJSON.status = "fail";
+				responseJSON.code = 400;
+				responseJSON.data = {};
 
 				// if the request type is accepted
 				if (request.method == apiPage.acceptedMethod) {
-					
+
 					// check for a proper payload
 					let improperPayload = false;
-					apiPage.acceptedPayload.forEach(function (acceptedPayloadKey) {
-						if (fullHeaders[acceptedPayloadKey] == null) {
+					apiPage.requiredPayload.forEach(function (requiredPayloadKey) {
+						if (fullHeaders[requiredPayloadKey] == null) {
 							improperPayload = true;
-							return;
+							responseJSON.status = "fail";
+							responseJSON.code = 400;
+							responseJSON.data[requiredPayloadKey] = `The header/payload key ${requiredPayloadKey} is required.`
 						}
 					});
 					if (improperPayload) { // payload is improper, send 400 error
-						responseSetting.setResponseFullHTML(response, 400); // TO DO: Create proper error diagnosis structure, send JSON back
+						responseSetting.setResponseFullJSON(response, 400, responseJSON); // TO DO: Create proper error diagnosis structure, send JSON back
 						canSendResponse = true;
-						response.end()
 						return;
 					}
 
-					apiPage.logicHandler(request, fullHeaders, response, mySQLconnection); // pass the request to the proper endpoint handler, always returns true
+					apiPage.logicHandler(request, fullHeaders, response, responseJSON); // pass the request to the proper endpoint handler, always returns true
 					canSendResponse = true;
 					return;
 				} else { // request type is not the right one
@@ -94,9 +80,11 @@ serverStructure.forEach(function (serverData) {
 						}
 					});
 					if (!anotherUniteratedRequestTypeExists) {
-						responseSetting.setResponseFullHTML(response, 400);
+						responseJSON.status = "fail";
+						responseJSON.message = `Incorrect HTTP method used. ${request.method} was used when ${apiPage.acceptedMethod} should be used instead.`;
+						responseJSON.code = 400;
+						responseSetting.setResponseFullJSON(response, 400, responseJSON);
 						canSendResponse = true;
-						response.end()
 						return;
 					}
 				}
@@ -106,22 +94,36 @@ serverStructure.forEach(function (serverData) {
 			return;
 		}
 
-		serverData.staticServing.forEach(function (staticPage) {
+		serverData.staticServing.forEach(function (staticPage) { // server static pages to users
 			if (canSendResponse) return;
 
 			if (truncatedUrl == staticPage.webAddress || staticPage.aliases.indexOf(truncatedUrl) > -1) { // requested URL
 
 				let staticPath = path.join(__dirname, staticPage.localResponseFile);
 				if (fs.existsSync(staticPath)) { // if the file exists
-					let staticPageContent = fs.readFileSync(staticPage.localResponseFile).toString();
+					let staticPageContent = fs.readFileSync(staticPath).toString(); // read from file
+
+					for (var fragmentName in staticPage.fileSplit) { // file may be split into fragments
+						fragmentPath = staticPage.fileSplit[fragmentName];
+
+						if (fs.existsSync(fragmentPath)) { // if fragment exists
+
+							let fragmentContent = fs.readFileSync(fragmentPath).toString(); // read content of fragment
+							staticPageContent = staticPageContent.replace(`<@${fragmentName}>`, fragmentContent); // place fragment in full file
+						
+						} else { // no such fragment exists
+							staticPageContent = staticPageContent.replace(`<@${fragmentName}>`, ""); // remove snippet from code
+						}
+					}
 					responseSetting.setResponseHeader(response, 200, 'text/html');
 					response.write(staticPageContent);
+					response.end();
 					canSendResponse = true;
 				}
 			}
 		});
 		if (canSendResponse) {
-			return response.end();
+			return;
 		}
 
 
@@ -129,7 +131,11 @@ serverStructure.forEach(function (serverData) {
 			responseSetting.setResponseFullHTML(response, 404);
 			return response.end();
 		} else { // error handling; it is said that a response can be sent but it hasn't already
-			responseSetting.setResponseFullHTML(response, 500);
+			let responseJSON = {};
+			responseJSON.status = "error";
+			responseJSON.message = "Internal server failure.";
+			responseJSON.code = 500;
+			responseSetting.setResponseFullJSON(response, 500, responseJSON);
 			return response.end();
 		}
 	}
