@@ -142,6 +142,10 @@ serverStructure.forEach(function (serverData) {
 	serverData.activePorts.forEach(function (port) {
 		newHttpServer = http.createServer(serverFunction);
 		newHttpServer.listen(port);
+		newHttpServer.on('error', function (e) {
+			console.log("Server error: ");
+			console.log(e.toString());
+		});
 		console.log("Listening on port " + port);
 	});
 });
