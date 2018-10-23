@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<@HEADER>
+	</head>
+	<body>
+		<@TOPBAR>
+		<@ALERTS>
+		<div class="container mb-4">
+			<div class="row justify-content-center">
+				<div class="col-lg-8" id="list">
+					<form action="/api/alerts/create" method="post" enctype="application/x-www-form-urlencoded">
+						<div class="form-group">
+							<label for="exampleFormControlFile1">Create an alert</label>
+							<input type="text" class="form-control-sm" id="exampleFormControlFile1" name="content">
+							<input type="submit" class="form-control-submit"></input>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
