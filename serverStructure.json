@@ -11,6 +11,16 @@
 					"TOPBAR": "static/topbar.html",
 					"ALERTS": "static/alerts.html"
 				}
+			},
+			{
+				"webAddress": "/alerts",
+				"aliases": ["/alerts.html", "/alertsConfig", "/alertsConfig.html"],
+				"localResponseFile": "static/alertsConfig.html",
+				"fileSplit": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
 			}
 		],
 		"apiLogic": [
@@ -64,7 +74,8 @@
 				"acceptedMethod": "DELETE",
 				"requiredPayload": [
 					"id"
-				]
+				],
+				"optionalPayload": []
 			},
 			{
 				"webApiAddress": "/api/v1/alerts/list",
