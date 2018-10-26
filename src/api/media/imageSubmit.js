@@ -7,7 +7,8 @@ const fs = require("fs");
 
 const mime = ['image/jpeg', 'image/png']
 
-module.exports = function(request, fullHeaders, response, responseJSON) {
+module.exports = function(request, fullHeaders, response) {
+	let responseJSON = {};
 	let form = new formidable.IncomingForm();
 	form.parse(request, function (err, fields, files) {
 		if (err) {
@@ -20,19 +21,19 @@ module.exports = function(request, fullHeaders, response, responseJSON) {
 
 		for (var file in files) {
 			let tempPath = files[file].path;
-			if (mime.indexOf(files[file].type) == -1) {
-				responseJSON.status = "fail";
-				responseJSON.code = 400;
-				responseJSON.message = "The submitted file's type is not supported.";
-				responseSetting.setResponseFullJSON(response, 400, responseJSON);
-				return;
-			}
 			if (files[file].size > 20971520) { // no files > 20 MiB
 				responseJSON.status = "fail";
 				responseJSON.code = 400;
 				responseJSON.message = "The submitted file's size is too large (20MiB maximum = 20,971,520 bytes).";
 				responseSetting.setResponseFullJSON(response, 400, responseJSON);
 				return true;
+			}
+			if (mime.indexOf(files[file].type) == -1) {
+				responseJSON.status = "fail";
+				responseJSON.code = 400;
+				responseJSON.message = "The submitted file's type is not supported.";
+				responseSetting.setResponseFullJSON(response, 400, responseJSON);
+				return;
 			}
 
 

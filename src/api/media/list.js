@@ -1,7 +1,9 @@
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 
-module.exports = function(request, fullHeaders, response, responseJSON) {
+module.exports = function(request, fullHeaders, response) {
+	let responseJSON = {};
+
 	let count = parseInt(fullHeaders['count']);
 	if (count.toString() == 'NaN') {
 		count = 10;
@@ -11,14 +13,14 @@ module.exports = function(request, fullHeaders, response, responseJSON) {
 		responseJSON.message = "Response limited to 100 results";
 	}
 
-	let query = "SELECT * FROM joshuas3.images ORDER BY dateAdded DESC LIMIT ?"
+	let query = "SELECT id FROM joshuas3.images ORDER BY dateAdded DESC LIMIT ?"
 	mySQLconnection.query(query, [count], function(err, results) {
 		if (err) {
 			responseJSON.status = "error";
 			responseJSON.message = err.toString();
 			responseJSON.code = 400;
 			responseSetting.setResponseFullJSON(response, 400, responseJSON);
-			return true;
+			return;
 		}
 		let listOfIds = [];
 		results.forEach(function (row) {
@@ -26,9 +28,10 @@ module.exports = function(request, fullHeaders, response, responseJSON) {
 		});
 		responseJSON.status = "success";
 		responseJSON.code = 200;
+		responseJSON.data = {};
 		responseJSON.data.ids = listOfIds;
 
 		responseSetting.setResponseFullJSON(response, 200, responseJSON);
-		return true;
+		return;
 	});
 }

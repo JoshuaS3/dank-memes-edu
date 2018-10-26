@@ -6,7 +6,7 @@
 				"webAddress": "/",
 				"aliases": ["/home", "/index", "/home.html", "/index.html"],
 				"localResponseFile": "static/index.html",
-				"fileSplit": {
+				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
 					"ALERTS": "static/alerts.html"
@@ -16,16 +16,16 @@
 				"webAddress": "/alerts",
 				"aliases": ["/alerts.html", "/alertsConfig", "/alertsConfig.html"],
 				"localResponseFile": "static/alertsConfig.html",
-				"fileSplit": {
+				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
 					"ALERTS": "static/alerts.html"
 				}
 			}
 		],
-		"apiLogic": [
+		"apiEndpoints": [
 			{
-				"webApiAddress": "/api/v1/media/image",
+				"webAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
 				"logicHandler": "./src/api/media/imageSubmit.js",
 				"acceptedMethod": "POST",
@@ -33,7 +33,7 @@
 				"optionalPayload": []
 			},
 			{
-				"webApiAddress": "/api/v1/media/image",
+				"webAddress": "/api/v1/media/image",
 				"aliases": ["/image", "/api/media/image"],
 				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET",
@@ -43,7 +43,7 @@
 				"optionalPayload": []
 			},
 			{
-				"webApiAddress": "/api/v1/media/list",
+				"webAddress": "/api/v1/media/list",
 				"aliases": ["/api/media/list"],
 				"logicHandler": "./src/api/media/list.js",
 				"acceptedMethod": "GET",
@@ -55,7 +55,7 @@
 
 
 			{
-				"webApiAddress": "/api/v1/alerts/create",
+				"webAddress": "/api/v1/alerts/create",
 				"aliases": ["/api/alerts/create"],
 				"logicHandler": "./src/api/alerts/create.js",
 				"acceptedMethod": "POST",
@@ -68,7 +68,7 @@
 				]
 			},
 			{
-				"webApiAddress": "/api/v1/alerts/delete",
+				"webAddress": "/api/v1/alerts/delete",
 				"aliases": ["/api/alerts/delete"],
 				"logicHandler": "./src/api/alerts/delete.js",
 				"acceptedMethod": "DELETE",
@@ -78,7 +78,7 @@
 				"optionalPayload": []
 			},
 			{
-				"webApiAddress": "/api/v1/alerts/list",
+				"webAddress": "/api/v1/alerts/list",
 				"aliases": ["/api/alerts/list"],
 				"logicHandler": "./src/api/alerts/list.js",
 				"acceptedMethod": "GET",

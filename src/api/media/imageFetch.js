@@ -1,16 +1,18 @@
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 
-module.exports = function(request, fullHeaders, response, responseJSON) {
+module.exports = function(request, fullHeaders, response) {
+	let responseJSON = {};
 	let imageHashValue = fullHeaders['h'];
 
 	// check to make sure the hash is a proper MD5 hash
 	let properHeaderRegex = /^[0-9A-Fa-f]{32}$/g;
 	if (!imageHashValue.match(properHeaderRegex)) {
-		let htmlCode = 400;
-		responseSetting.setResponseFullHTML(response, htmlCode);
-		response.end();
-		return true;
+		responseJSON.status = "fail";
+		responseJSON.code = 400;
+		responseJSON.message = "Improper hash format";
+		responseSetting.setResponseFullJSON(response, 400, responseJSON);
+		return;
 	}
 
 
@@ -18,13 +20,14 @@ module.exports = function(request, fullHeaders, response, responseJSON) {
 	mySQLconnection.query(query, [imageHashValue], function (err, result) {
 		if (err) // if it got past the regex, this is a SQL error
 		{
-			let htmlCode = 500;
-			responseSetting.setResponseFullHTML(response, htmlCode);
-			return true;
+			responseJSON.status = "error";
+			responseJSON.code = 500;
+			responseJSON.message = err.toString();
+			responseSetting.setResponseFullJSON(response, 500, responseJSON);
+			return;
 		}
-		if (result == '') {
-			let htmlCode = 400;
-			responseSetting.setResponseFullHTML(response, htmlCode);
+		if (result.length == 0) {
+			responseSetting.setResponseFullHTML(response, 404);
 			return true;
 		}
 
