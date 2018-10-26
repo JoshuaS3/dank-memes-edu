@@ -12,6 +12,7 @@ const qs = require('querystring');
 const urlLib = require("url");
 const mysql = require("mysql");
 const responseSetting = require("./src/responseSetting.js");
+const addressChecker = require("./src/addressChecker.js");
 
 console.log("Loading server structure");
 const serverStructure = require("./serverStructure.json");
@@ -37,7 +38,7 @@ serverStructure.forEach(function (serverData) {
 
 			if (responseSent) return;
 
-			if (truncatedUrl == apiEndpointData.webAddress || apiEndpointData.aliases.indexOf(truncatedUrl) > -1) {
+			if (addressChecker(truncatedUrl, apiEndpointData)) {
 
 				if (request.method == apiEndpointData.acceptedMethod) {
 
@@ -77,7 +78,7 @@ serverStructure.forEach(function (serverData) {
 		serverData.staticServing.forEach(function (staticPageData) { // server static pages to users
 			if (responseSent) return;
 
-			if (truncatedUrl == staticPageData.webAddress || staticPageData.aliases.indexOf(truncatedUrl) > -1) { // requested URL
+			if (addressChecker(truncatedUrl, staticPageData)) {
 
 				let staticPath = path.join(__dirname, staticPageData.localResponseFile);
 				if (fs.existsSync(staticPath)) { // if the file exists
