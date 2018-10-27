@@ -28,7 +28,21 @@
 				"webAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
 				"logicHandler": "./src/api/media/imageSubmit.js",
-				"acceptedMethod": "POST"
+				"acceptedMethod": "POST",
+				"docs": {
+					"method": "POST",
+					"params": {
+						"param_name": {
+							"required_status": "optional",
+							"data_type": "string",
+							"description": "param description"
+						}
+					},
+					"headers": {
+						"Authorization": "Client ID"
+					},
+					"description": "endpoint description and usage info"
+				}
 			},
 			{
 				"webAddress": "/api/v1/media/image",
