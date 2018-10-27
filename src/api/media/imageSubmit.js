@@ -6,7 +6,7 @@ const fs = require("fs");
 
 const mime = ['image/jpeg', 'image/png']
 
-module.exports = function(request, fullHeaders, response) {
+module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 	let form = new formidable.IncomingForm();
 	form.hash = 'md5';

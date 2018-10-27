@@ -30,21 +30,6 @@ serverStructure.forEach(function (serverData) {
 		let responseSent = false;
 		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
 		let truncatedUrl = request.url.split("?")[0].replace(/\/$/, "");
-		let rawBody = ""
-
-		request.on('data', (chunk) => {
-			if (responseSent) return;
-			if (rawBody > 2.1e7) { // 21MB
-				let responseJSON = {};
-				responseJSON.success = false;
-				responseJSON.code = 413;
-				responseJSON.message = "Payload too large";
-				responseSetting.setResponseFullJSON(response, responseJSON);
-				responseSent = true;
-				return;
-			}
-			rawBody += chunk;
-		})
 
 		if (responseSent) return;
 
@@ -57,7 +42,7 @@ serverStructure.forEach(function (serverData) {
 
 				if (request.method == apiEndpointData.acceptedMethod) {
 
-					apiEndpointData.logicHandler(request, fullHeaders, response, rawBody, truncatedUrl);
+					apiEndpointData.logicHandler(request, fullHeaders, response, truncatedUrl);
 					responseSent = true;
 					return;
 
