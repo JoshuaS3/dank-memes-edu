@@ -21,7 +21,7 @@ module.exports.setResponseHeaderJSON = function(response, code) {
 	response.writeHead(code, {"Content-Type": "application/json"});
 };
 module.exports.setResponseFullJSON = function(response, data) {
-	response.writeHead(data.code, {"Content-Type": "application/json"});
+	response.writeHead(data.status, {"Content-Type": "application/json"});
 	response.write(JSON.stringify(data));
 	response.end();
 };
