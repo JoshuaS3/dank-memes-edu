@@ -22,7 +22,7 @@
 								console.log(result);
 								for (var i in result.data.ids) {
 									let hash = result.data.ids[i];
-									let hashUrl = '/image?h=' + hash;
+									let hashUrl = '/image/' + hash;
 									$("#list").append('<div class="shadow-lg p-3 mb-2 mt-4"><img class="d-block img-fluid w-100" src="' + hashUrl + '"/></div>')
 								}
 							});

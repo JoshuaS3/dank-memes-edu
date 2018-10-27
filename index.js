@@ -8,7 +8,6 @@ console.log("Acquiring necessary modules");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const qs = require('querystring');
 const urlLib = require("url");
 const mysql = require("mysql");
 const responseSetting = require("./src/responseSetting.js");
@@ -31,7 +30,26 @@ serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
 		let responseSent = false;
 		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
-		let truncatedUrl = request.url.split("?")[0];
+		let truncatedUrl = request.url.split("?")[0].replace(/\/$/, "");
+		let rawBody = ""
+
+		request.on('data', (chunk) => {
+			if (responseSent) return;
+			if (rawBody > 2.1e7) { // 1MB
+				let responseJSON = {};
+				responseJSON.status = "fail";
+				responseJSON.code = 413;
+				responseJSON.message = "Payload too large.";
+				responseSetting.setResponseFullJSON(response, 413, responseJSON);
+				responseSent = true;
+				return;
+			}
+			if (chunk.toString().length < 1e6) {
+				rawBody += chunk;
+			}
+		})
+
+		if (responseSent) return;
 
 		// Logic for API endpoints
 		serverData.apiEndpoints.forEach(function (apiEndpointData) {
@@ -42,7 +60,7 @@ serverStructure.forEach(function (serverData) {
 
 				if (request.method == apiEndpointData.acceptedMethod) {
 
-					apiEndpointData.logicHandler(request, fullHeaders, response);
+					apiEndpointData.logicHandler(request, fullHeaders, response, rawBody, truncatedUrl);
 					responseSent = true;
 					return;
 

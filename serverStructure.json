@@ -3,7 +3,7 @@
 		"activePorts": [8080],
 		"staticServing": [
 			{
-				"webAddress": "/",
+				"webAddress": "",
 				"aliases": ["/index"],
 				"localResponseFile": "static/html/index.html",
 				"fragments": {
@@ -24,8 +24,6 @@
 			}
 		],
 		"apiEndpoints": [
-
-			// ~~~~~~~~~~~~~~~~~~~~IMAGES~~~~~~~~~~~~~~~~~~~~
 			{
 				"webAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
@@ -34,7 +32,7 @@
 			},
 			{
 				"webAddress": "/api/v1/media/image",
-				"aliases": ["/image", "/api/media/image"],
+				"aliases": ["/image", "/image/[0-9A-Fa-f]{32}", "/api/media/image", "/api/media/image/[0-9A-Fa-f]{32}"],
 				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET"
 			},
@@ -44,8 +42,6 @@
 				"logicHandler": "./src/api/media/list.js",
 				"acceptedMethod": "GET"
 			},
-
-			// ~~~~~~~~~~~~~~~~~~~~ALERTS~~~~~~~~~~~~~~~~~~~~
 			{
 				"webAddress": "/api/v1/alerts/create",
 				"aliases": ["/api/alerts/create"],

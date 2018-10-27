@@ -1,13 +1,22 @@
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
+const qs = require("querystring");
 
-module.exports = function(request, fullHeaders, response) {
+module.exports = function(request, fullHeaders, response, body, truncatedUrl) {
 	let responseJSON = {};
-	let imageHashValue = fullHeaders['h'];
+	body = qs.parse(body);
 
-	// check to make sure the hash is a proper MD5 hash
-	let properHeaderRegex = /^[0-9A-Fa-f]{32}$/g;
-	if (!imageHashValue.match(properHeaderRegex)) {
+	let tryUrlParse = truncatedUrl.match(/\/[0-9A-Fa-f]{32}/g) ? true : false;
+	let imageHashValue = fullHeaders.h || (tryUrlParse ? truncatedUrl.match(/[0-9A-Fa-f]{32}/g)[0] : false) || body.h;
+
+	if (!imageHashValue) {
+		responseJSON.status = "fail";
+		responseJSON.code = 400;
+		responseJSON.message = "Required payload `h` not present";
+		responseSetting.setResponseFullJSON(response, 400, responseJSON);
+		return;
+	}
+	if (!imageHashValue.match(/^[0-9A-Fa-f]{32}$/g)) {
 		responseJSON.status = "fail";
 		responseJSON.code = 400;
 		responseJSON.message = "Improper hash format";
