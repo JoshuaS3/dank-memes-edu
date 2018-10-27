@@ -9,7 +9,6 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const urlLib = require("url");
-const mysql = require("mysql");
 const responseSetting = require("./src/responseSetting.js");
 const addressChecker = require("./src/addressChecker.js");
 
@@ -44,9 +43,7 @@ serverStructure.forEach(function (serverData) {
 				responseSent = true;
 				return;
 			}
-			if (chunk.toString().length < 1e6) {
-				rawBody += chunk;
-			}
+			rawBody += chunk;
 		})
 
 		if (responseSent) return;

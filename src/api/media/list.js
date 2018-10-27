@@ -1,13 +1,10 @@
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 
-module.exports = function(request, fullHeaders, response) {
+module.exports = function(request, fullHeaders, response, truncatedUrl, body) {
 	let responseJSON = {};
 
-	let count = parseInt(fullHeaders['count']);
-	if (count.toString() == 'NaN') {
-		count = 10;
-	}
+	let count = parseInt(fullHeaders.count) || body.count || 10;
 	if (count > 100) {
 		count = 100;
 		responseJSON.message = "Response limited to 100 results";
