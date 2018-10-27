@@ -10,29 +10,29 @@ module.exports = function(request, fullHeaders, response, body, truncatedUrl) {
 	let imageHashValue = fullHeaders.h || (tryUrlParse ? truncatedUrl.match(/[0-9A-Fa-f]{32}/g)[0] : false) || body.h;
 
 	if (!imageHashValue) {
-		responseJSON.status = "fail";
-		responseJSON.code = 400;
+		responseJSON.success = false;
+		responseJSON.status = 400;
 		responseJSON.message = "Required payload `h` not present";
-		responseSetting.setResponseFullJSON(response, 400, responseJSON);
+		responseSetting.setResponseFullJSON(response, responseJSON);
 		return;
 	}
 	if (!imageHashValue.match(/^[0-9A-Fa-f]{32}$/g)) {
-		responseJSON.status = "fail";
-		responseJSON.code = 400;
+		responseJSON.success = false;
+		responseJSON.status = 400;
 		responseJSON.message = "Improper hash format";
-		responseSetting.setResponseFullJSON(response, 400, responseJSON);
+		responseSetting.setResponseFullJSON(response, responseJSON);
 		return;
 	}
 
 
 	let query = "SELECT * FROM `joshuas3`.`images` WHERE id = ? ";
 	mySQLconnection.query(query, [imageHashValue], function (err, result) {
-		if (err) // if it got past the regex, this is a SQL error
+		if (err)
 		{
-			responseJSON.status = "error";
-			responseJSON.code = 500;
+			responseJSON.success = false;
+			responseJSON.status = 500;
 			responseJSON.message = err.toString();
-			responseSetting.setResponseFullJSON(response, 500, responseJSON);
+			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
 		if (result.length == 0) {

@@ -13,46 +13,46 @@ module.exports = function(request, fullHeaders, response) {
 	form.parse(request, function (err, fields, files) {
 		if (err) {
 			console.log(err);
-			responseJSON.status = "fail";
-			responseJSON.code = 400;
-			responseJSON.message = "The request is invalid.";
-			responseSetting.setResponseFullJSON(response, 400, responseJSON);
+			responseJSON.success = false;
+			responseJSON.status = 400;
+			responseJSON.message = "The request is invalid";
+			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
 
 		for (var file in files) {
 			let tempPath = files[file].path;
 			if (files[file].size > 20971520) { // no files > 20 MiB
-				responseJSON.status = "fail";
-				responseJSON.code = 400;
-				responseJSON.message = "The submitted file's size is too large (20MiB maximum = 20,971,520 bytes).";
-				responseSetting.setResponseFullJSON(response, 400, responseJSON);
+				responseJSON.success = false;
+				responseJSON.status = 400;
+				responseJSON.message = "The submitted file's size is too large (20MiB maximum = 20,971,520 bytes)";
+				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
 			if (mime.indexOf(files[file].type) == -1) {
-				responseJSON.status = "fail";
-				responseJSON.code = 400;
-				responseJSON.message = "The submitted file's type is not supported.";
-				responseSetting.setResponseFullJSON(response, 400, responseJSON);
+				responseJSON.success = false;
+				responseJSON.status = 400;
+				responseJSON.message = "The submitted file's type is not supported";
+				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
 
 			fs.readFile(tempPath, function(err, imageBuffer) {
 				if (err) {
-					responseJSON.status = "error";
-					responseJSON.code = 500;
+					responseJSON.success = false;
+					responseJSON.status = 500;
 					responseJSON.message = err.toString();
-					responseSetting.setResponseFullJSON(response, 500, responseJSON);
+					responseSetting.setResponseFullJSON(response, responseJSON);
 					return;
 				}
 
 				let checkQuery = "SELECT * FROM `joshuas3`.`images` WHERE id = ? ";
 				mySQLconnection.query(checkQuery, [files[file].hash], function(err, result) {
 					if (err) {
-						responseJSON.status = "error";
-						responseJSON.code = 500;
+						responseJSON.success = false;
+						responseJSON.status = 500;
 						responseJSON.message = err.toString();
-						responseSetting.setResponseFullJSON(response, 500, responseJSON);
+						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
 					if (result.length == 0) {
@@ -62,31 +62,33 @@ module.exports = function(request, fullHeaders, response) {
 							image: imageBuffer,
 							mime: files[file].type
 						}
-						mySQLconnection.query(query, values, function(err, da) {
+						mySQLconnection.query(query, values, function(err, results) {
 							if (err) {
-								responseJSON.status = "error";
-								responseJSON.code = 500;
+								responseJSON.success = false;
+								responseJSON.status = 500;
 								responseJSON.message = err.toString();
-								responseSetting.setResponseFullJSON(response, 500, responseJSON);
+								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							}
-							response.writeHead(302, {'Location': '/'});
-							response.end();
+							responseJSON.success = true;
+							responseJSON.status = 200;
+							responseJSON.data = {
+								"id": files[file].hash
+							}
+							responseSetting.setResponseFullJSON(response, responseJSON);
 							return;
 						});
 					} else {
-						response.writeHead(302, {'Location': '/'});
-						response.end();
+						responseJSON.success = true;
+						responseJSON.status = 200;
+						responseJSON.data = {
+							"id": files[file].hash
+						}
+						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
 				});
 			})
 		};
-
-		responseJSON.status = "fail";
-		responseJSON.code = 400;
-		responseJSON.message = "The request is invalid.";
-		responseSetting.setResponseFullJSON(response, 400, responseJSON);
-		return;
 	});
 };

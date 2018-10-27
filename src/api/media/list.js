@@ -13,22 +13,22 @@ module.exports = function(request, fullHeaders, response, truncatedUrl, body) {
 	let query = "SELECT id FROM joshuas3.images ORDER BY dateAdded DESC LIMIT ?"
 	mySQLconnection.query(query, [count], function(err, results) {
 		if (err) {
-			responseJSON.status = "error";
+			responseJSON.success = false;
+			responseJSON.status = 400;
 			responseJSON.message = err.toString();
-			responseJSON.code = 400;
-			responseSetting.setResponseFullJSON(response, 400, responseJSON);
+			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
 		let listOfIds = [];
 		results.forEach(function (row) {
 			listOfIds.push(row.id);
 		});
-		responseJSON.status = "success";
-		responseJSON.code = 200;
+		responseJSON.success = true;
+		responseJSON.status = 200;
 		responseJSON.data = {};
 		responseJSON.data.ids = listOfIds;
 
-		responseSetting.setResponseFullJSON(response, 200, responseJSON);
+		responseSetting.setResponseFullJSON(response, responseJSON);
 		return;
 	});
 }

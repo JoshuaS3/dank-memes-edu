@@ -34,12 +34,12 @@ serverStructure.forEach(function (serverData) {
 
 		request.on('data', (chunk) => {
 			if (responseSent) return;
-			if (rawBody > 2.1e7) { // 1MB
+			if (rawBody > 2.1e7) { // 21MB
 				let responseJSON = {};
-				responseJSON.status = "fail";
+				responseJSON.success = false;
 				responseJSON.code = 413;
-				responseJSON.message = "Payload too large.";
-				responseSetting.setResponseFullJSON(response, 413, responseJSON);
+				responseJSON.message = "Payload too large";
+				responseSetting.setResponseFullJSON(response, responseJSON);
 				responseSent = true;
 				return;
 			}
@@ -78,10 +78,10 @@ serverStructure.forEach(function (serverData) {
 
 						if (anotherUniteratedRequestTypeExists) {
 							let responseJSON = {};
-							responseJSON.status = "fail";
-							responseJSON.code = 400;
+							responseJSON.success = false;
+							responseJSON.status = 400;
 							responseJSON.message = "Incorrect HTTP method used.";
-							responseSetting.setResponseFullJSON(response, 400, responseJSON);
+							responseSetting.setResponseFullJSON(response, responseJSON);
 							responseSent = true;
 						}
 					});
@@ -126,10 +126,10 @@ serverStructure.forEach(function (serverData) {
 			return response.end();
 		} else { // error handling; it is said that a response can be sent but it hasn't already
 			let responseJSON = {};
-			responseJSON.status = "error";
+			responseJSON.success = false;
+			responseJSON.status = 500;
 			responseJSON.message = "Internal server failure.";
-			responseJSON.code = 500;
-			responseSetting.setResponseFullJSON(response, 500, responseJSON);
+			responseSetting.setResponseFullJSON(response, responseJSON);
 			return response.end();
 		}
 	}

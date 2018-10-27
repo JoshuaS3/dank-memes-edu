@@ -20,8 +20,8 @@ module.exports.setResponseHeaderHTML = function(response, code) {
 module.exports.setResponseHeaderJSON = function(response, code) {
 	response.writeHead(code, {"Content-Type": "application/json"});
 };
-module.exports.setResponseFullJSON = function(response, code, data) {
-	response.writeHead(code, {"Content-Type": "application/json"});
+module.exports.setResponseFullJSON = function(response, data) {
+	response.writeHead(data.code, {"Content-Type": "application/json"});
 	response.write(JSON.stringify(data));
 	response.end();
 };
