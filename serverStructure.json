@@ -4,8 +4,8 @@
 		"staticServing": [
 			{
 				"webAddress": "/",
-				"aliases": ["/home", "/index", "/home.html", "/index.html"],
-				"localResponseFile": "static/index.html",
+				"aliases": ["/index"],
+				"localResponseFile": "static/html/index.html",
 				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
@@ -14,8 +14,8 @@
 			},
 			{
 				"webAddress": "/alerts",
-				"aliases": ["/alerts.html", "/alertsConfig", "/alertsConfig.html"],
-				"localResponseFile": "static/alertsConfig.html",
+				"aliases": [],
+				"localResponseFile": "static/html/alertsConfig.html",
 				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
@@ -24,73 +24,46 @@
 			}
 		],
 		"apiEndpoints": [
+
+			// ~~~~~~~~~~~~~~~~~~~~IMAGES~~~~~~~~~~~~~~~~~~~~
 			{
 				"webAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
 				"logicHandler": "./src/api/media/imageSubmit.js",
-				"acceptedMethod": "POST",
-				"requiredPayload": [],
-				"optionalPayload": []
+				"acceptedMethod": "POST"
 			},
 			{
 				"webAddress": "/api/v1/media/image",
 				"aliases": ["/image", "/api/media/image"],
 				"logicHandler": "./src/api/media/imageFetch.js",
-				"acceptedMethod": "GET",
-				"requiredPayload": [
-					"h"
-				],
-				"optionalPayload": []
+				"acceptedMethod": "GET"
 			},
 			{
 				"webAddress": "/api/v1/media/list",
 				"aliases": ["/api/media/list"],
 				"logicHandler": "./src/api/media/list.js",
-				"acceptedMethod": "GET",
-				"requiredPayload": [],
-				"optionalPayload": [
-					"count"
-				]
+				"acceptedMethod": "GET"
 			},
 
-
+			// ~~~~~~~~~~~~~~~~~~~~ALERTS~~~~~~~~~~~~~~~~~~~~
 			{
 				"webAddress": "/api/v1/alerts/create",
 				"aliases": ["/api/alerts/create"],
 				"logicHandler": "./src/api/alerts/create.js",
-				"acceptedMethod": "POST",
-				"requiredPayload": [
-					"content"
-				],
-				"optionalPayload": [
-					"severity",
-					"expirationDate"
-				]
+				"acceptedMethod": "POST"
 			},
 			{
 				"webAddress": "/api/v1/alerts/delete",
 				"aliases": ["/api/alerts/delete"],
 				"logicHandler": "./src/api/alerts/delete.js",
-				"acceptedMethod": "DELETE",
-				"requiredPayload": [
-					"id"
-				],
-				"optionalPayload": []
+				"acceptedMethod": "DELETE"
 			},
 			{
 				"webAddress": "/api/v1/alerts/list",
 				"aliases": ["/api/alerts/list"],
 				"logicHandler": "./src/api/alerts/list.js",
-				"acceptedMethod": "GET",
-				"requiredPayload": [],
-				"optionalPayload": []
+				"acceptedMethod": "GET"
 			}
-
-
-
-
-
-
 		]
 	}
 ]
