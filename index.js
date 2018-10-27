@@ -15,7 +15,7 @@ const addressChecker = require("./src/addressChecker.js");
 console.log("Loading server structure");
 const serverStructure = require("./serverStructure.json");
 
-console.log("Requiring API endpoints");
+console.log("Requiring API endpoint logic handlers");
 serverStructure.forEach(function (serverData) {
 	serverData.apiEndpoints.forEach(function (apiEndpointData) {
 		apiEndpointData.logicHandler = require(apiEndpointData.logicHandler); // require the API endpoint logic handlers before use
@@ -24,6 +24,10 @@ serverStructure.forEach(function (serverData) {
 
 console.log("Establishing MySQL connection");
 const mySQLconnection = require("./src/mySQLconnection.js");
+
+console.log("Generating secret key for JSON Web Token");
+const JWTsecret = require("./src/JWTsecret.js");
+
 
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
