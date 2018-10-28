@@ -64,11 +64,22 @@ elif [ "$1" == "restart" ]; then
 		echo -e "Bot is online.${NC}"
 	fi
 elif [ "$1" == "log" ]; then
-	printf "${RED}"
-	cat stderr.log 2>/dev/null
-	printf "${NC}"
-	echo -e ""
-	cat stdout.log 2>/dev/null
+	VERBOSITY="INFO|ERROR|WARN";
+	TAG=".*";
+	if [ -n "$2" ]; then
+		VERBOSITY=$(echo "$2" | tr a-z A-Z)
+		if [ ${VERBOSITY} == "DEBUG" ]; then
+			VERBOSITY="INFO|DEBUG|ERROR|WARN";
+		fi
+		if [ ${VERBOSITY} == "VERBOSE" ]; then
+			VERBOSITY="INFO|DEBUG|VERBOSE|ERROR|WARN";
+		fi
+	fi
+	if [ -n "$3" ]; then
+		TAG=$(echo "$3" | tr a-z A-Z)
+	fi
+	FILE=$(ls -t logs | head -1)
+	cat logs/${FILE} | grep -Pzo ".*\|\ (?:${VERBOSITY})\ \|\ (?:${TAG})\ \|\ .*[\n]([^0-9].*)?"
 else
 	if [ -z $(ps -ef | awk '/[n]ode/{print $2}') ]; then
 		echo -e "${RED}BOT OFFLINE${CYAN} - No identifiable node instance is currently running. Run ${YELLOW}./status.sh start ${CYAN} to start the bot."

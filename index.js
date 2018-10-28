@@ -1,5 +1,7 @@
 const logger = require("./src/logger.js");
-logger.i("Entry", "Entry point");
+logger.i("Process", "Entry point");
+logger.i("Process", `Running Node.JS version ${process.version} on ${process.platform} ${process.arch}`);
+logger.i("Process", `Process ID: ${process.pid}`)
 
 logger.i("Init", "Acquiring necessary modules");
 
@@ -39,10 +41,11 @@ const JWTsecret = require("./src/JWTsecret.js");
 serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
 		let responseSent = false;
-		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
 		let truncatedUrl = request.url.split("?")[0].replace(/\/$/, "");
+		logger.d("Request", `${request.method.toUpperCase()} request made at ${truncatedUrl}/`);
+		logger.v("Request", `${request.method.toUpperCase()} request made at ${truncatedUrl}/ headers: ${JSON.stringify(request.headers)}`);
+		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
 
-		if (responseSent) return;
 
 		// Logic for API endpoints
 		serverData.apiEndpoints.forEach(function (apiEndpointData) {
@@ -79,6 +82,7 @@ serverStructure.forEach(function (serverData) {
 							responseJSON.message = "Incorrect HTTP method used.";
 							responseSetting.setResponseFullJSON(response, responseJSON);
 							responseSent = true;
+							logger.v("Request", "Incorrect HTTP method used, returned 400");
 						}
 					});
 				}
@@ -132,8 +136,11 @@ serverStructure.forEach(function (serverData) {
 	serverData.activePorts.forEach(function (port) {
 		newHttpServer = http.createServer(serverFunction);
 		newHttpServer.listen(port);
-		newHttpServer.on('error', function (e) {
-			logger.e("Server", "HTTP server error", e);
+		newHttpServer.on('close', function () {
+			logger.i("Server", "HTTP server closed");
+		});
+		process.on('beforeExit', () => {
+			if (newHttpServer.listening) newHttpServer.close();
 		});
 		logger.i("Server", "Listening on port " + port);
 	});
@@ -142,3 +149,10 @@ serverStructure.forEach(function (serverData) {
 process.on('uncaughtException', (e) => {
 	logger.e("Unknown", "Uncaught process exception", e);
 });
+
+process.on('beforeExit', (code) => {
+	console.log(code);
+	logger.write();
+});
+
+logger.write();

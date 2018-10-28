@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<@HEADER>
+	</head>
+	<body>
+		<@TOPBAR>
+		<@ALERTS>
+		<div class="container mb-4">
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<form action="/api/accounts/create" method="post" enctype="application/x-www-form-urlencoded">
+						<div class="form-group" id="create-form">
+							<script type="text/javascript">
+								$(document).ready(function(){
+									$.getJSON('/api/accounts/createToken', null, function(result) {
+										console.log(result);
+										$("#create-form").append('<input type="hidden" name="verToken" value="' + result.data + '">')
+									});
+								});
+							</script>
+							<input type="text" class="form-control-sm" name="displayName">
+							<input type="text" class="form-control-sm" name="password">
+							<input type="submit" class="form-control-submit"></input>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

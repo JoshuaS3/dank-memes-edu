@@ -21,6 +21,16 @@
 					"TOPBAR": "static/topbar.html",
 					"ALERTS": "static/alerts.html"
 				}
+			},
+			{
+				"webAddress": "/register",
+				"aliases": [],
+				"localResponseFile": "static/html/register.html",
+				"fragments": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
 			}
 		],
 		"apiEndpoints": [
@@ -72,6 +82,48 @@
 				"webAddress": "/api/v1/alerts/list",
 				"aliases": ["/api/alerts/list"],
 				"logicHandler": "./src/api/alerts/list.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/accounts/create",
+				"aliases": ["/api/accounts/create"],
+				"logicHandler": "./src/api/accounts/create.js",
+				"acceptedMethod": "POST"
+			},
+			{
+				"webAddress": "/api/v1/accounts/createToken",
+				"aliases": ["/api/accounts/createToken"],
+				"logicHandler": "./src/api/accounts/createToken.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/accounts/login",
+				"aliases": ["/api/accounts/login"],
+				"logicHandler": "./src/api/accounts/login.js",
+				"acceptedMethod": "POST"
+			},
+			{
+				"webAddress": "/api/v1/accounts/logout",
+				"aliases": ["/api/accounts/logout"],
+				"logicHandler": "./src/api/accounts/logout.js",
+				"acceptedMethod": "POST"
+			},
+			{
+				"webAddress": "/api/v1/accounts/delete",
+				"aliases": ["/api/accounts/delete"],
+				"logicHandler": "./src/api/accounts/delete.js",
+				"acceptedMethod": "DELETE"
+			},
+			{
+				"webAddress": "/api/v1/accounts/info",
+				"aliases": ["/api/accounts/info"],
+				"logicHandler": "./src/api/accounts/info.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/accounts/state",
+				"aliases": ["/api/accounts/state"],
+				"logicHandler": "./src/api/accounts/checkLoginState.js",
 				"acceptedMethod": "GET"
 			}
 		]

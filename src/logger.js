@@ -20,7 +20,7 @@ function formatDate(newDate) {
 	return formatted;
 }
 
-let outputFile = path.join(__dirname, path.join("../logs", (formatDate(new Date()).replace(/[\\\/:.]/g, '-') + ".log")));
+let outputFile = path.join(__dirname, path.join("../logs", (formatDate(new Date()).replace(/[\\\/:.]/g, '-').replace(" ", "---") + ".log")));
 
 let array = [];
 function update() {
@@ -72,7 +72,7 @@ function warn(tag, message) {
 }
 function error(tag, message, error) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n\n" + error.toString() + "\n\n";
+	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n" + error.toString() + "\n";
 	addToQueue(compiled, now);
 	write();
 }
