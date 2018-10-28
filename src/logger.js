@@ -2,8 +2,7 @@ const path = require("path");
 const fs = require("fs");
 
 
-function formatDate() {
-	let newDate = new Date();
+function formatDate(newDate) {
 	let formatted = "";
 	formatted += (newDate.getMonth() + 1).toString().padStart(2, '0');
 	formatted += "/";
@@ -21,50 +20,61 @@ function formatDate() {
 	return formatted;
 }
 
-let outputFile = path.join(__dirname, path.join("../logs", (formatDate().replace(/[\/:.]/g, '-') + ".log")));
+let outputFile = path.join(__dirname, path.join("../logs", (formatDate(new Date()).replace(/[\\\/:.]/g, '-') + ".log")));
 
-let queue = [];
+let array = [];
 function update() {
-	let queueLength = queue.length
-	if (queueLength > 0) {
-		fs.appendFile(outputFile, queue[0], function (err) {
-			if (err) throw(err);
-			queue.shift();
-			if ((queueLength - 1) > 0) update();
-		});
-	}
+	array.sort(function(x, y){
+		return x.timestamp - y.timestamp;
+	});
 }
 
+function write() {
+	let output = "";
+	array.forEach(function (item) {
+		output += item.content;
+	});
+	array = [];
+	fs.appendFileSync(outputFile, output);
+}
+
+setInterval(write, 5000);
+
+
+function addToQueue(compiled, now) {
+	let toAdd = {
+		timestamp: now,
+		content: compiled
+	}
+	array.push(toAdd);
+	update();
+}
 
 function info(tag, message) {
-	let now = formatDate();
-	let compiled = now + " | I | " + tag.toUpperCase() + " | " + message + "\n";
-	queue.push(compiled);
-	update();
+	let now = new Date();
+	let compiled = formatDate(now) + " | INFO | " + tag.toUpperCase() + " | " + message + "\n";
+	addToQueue(compiled, now);
 }
 function debug(tag, message) {
-	let now = formatDate();
-	let compiled = now + " | D | " + tag.toUpperCase() + " | " + message + "\n";
-	queue.push(compiled);
-	update();
+	let now = new Date();
+	let compiled = formatDate(now) + " | DEBUG | " + tag.toUpperCase() + " | " + message + "\n";
+	addToQueue(compiled, now);
 }
 function verbose(tag, message) {
-	let now = formatDate();
-	let compiled = now + " | V | " + tag.toUpperCase() + " | " + message + "\n";
-	queue.push(compiled);
-	update();
+	let now = new Date();
+	let compiled = formatDate(now) + " | VERBOSE | " + tag.toUpperCase() + " | " + message + "\n";
+	addToQueue(compiled, now);
 }
 function warn(tag, message) {
-	let now = formatDate();
-	let compiled = now + " | W | " + tag.toUpperCase() + " | " + message + "\n";
-	queue.push(compiled);
-	update();
+	let now = new Date();
+	let compiled = formatDate(now) + " | WARN | " + tag.toUpperCase() + " | " + message + "\n";
+	addToQueue(compiled, now);
 }
 function error(tag, message, error) {
-	let now = formatDate();
-	let compiled = now + " | E | " + tag.toUpperCase() + " | " + message + "\n\n" + error.toString() + "\n\n";
-	queue.push(compiled);
-	update();
+	let now = new Date();
+	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n\n" + error.toString() + "\n\n";
+	addToQueue(compiled, now);
+	write();
 }
 
 module.exports = {
@@ -72,5 +82,6 @@ module.exports = {
 	d: debug,
 	v: verbose,
 	w: warn,
-	e: error
+	e: error,
+	write: write
 }

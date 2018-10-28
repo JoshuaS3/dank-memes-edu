@@ -133,15 +133,12 @@ serverStructure.forEach(function (serverData) {
 		newHttpServer = http.createServer(serverFunction);
 		newHttpServer.listen(port);
 		newHttpServer.on('error', function (e) {
-			console.log("Server error: ");
-			console.log(e.toString());
+			logger.e("Server", "HTTP server error", e);
 		});
-		console.log("Listening on port " + port);
+		logger.i("Server", "Listening on port " + port);
 	});
 });
 
 process.on('uncaughtException', (e) => {
 	logger.e("Unknown", "Uncaught process exception", e);
 });
-
-throw(new Error("reeeee"));
