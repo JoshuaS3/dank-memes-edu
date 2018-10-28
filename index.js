@@ -1,31 +1,38 @@
-console.log("Entry point");
-// TO DO: Proper logging
-// `Logger.i(String tag, String message, [Exception e])`
-// `Logger.log(Logger.Severity.INFO, String tag, String message, [Exception e])`
-// I=Info, W=Warning, V=Verbose
+const logger = require("./src/logger.js");
+logger.i("Entry", "Entry point");
 
-console.log("Acquiring necessary modules");
+logger.i("Init", "Acquiring necessary modules");
+
+logger.d("Init", "Acquiring `http`");
 const http = require("http");
+logger.d("Init", "Acquiring `fs`");
 const fs = require("fs");
+logger.d("Init", "Acquiring `path`");
 const path = require("path");
+logger.d("Init", "Acquiring `url`");
 const urlLib = require("url");
+logger.d("Init", "Acquiring `./src/responseSetting.js`");
 const responseSetting = require("./src/responseSetting.js");
+logger.d("Init", "Acquiring `./src/addressChecker.js`");
 const addressChecker = require("./src/addressChecker.js");
 
-console.log("Loading server structure");
+logger.i("Init", "Loading server structure");
 const serverStructure = require("./serverStructure.json");
 
-console.log("Requiring API endpoint logic handlers");
-serverStructure.forEach(function (serverData) {
-	serverData.apiEndpoints.forEach(function (apiEndpointData) {
+logger.i("Init", "Acquiring API endpoint logic handlers");
+for (var serverDataNum in serverStructure) {
+	serverData = serverStructure[serverDataNum];
+	for (var apiEndpointDataNum in serverData.apiEndpoints) {
+		apiEndpointData = serverData.apiEndpoints[apiEndpointDataNum];
+		logger.d("Init", `Acquiring API endpoint logic handler for ${apiEndpointData.acceptedMethod} ${apiEndpointData.webAddress}`);
 		apiEndpointData.logicHandler = require(apiEndpointData.logicHandler); // require the API endpoint logic handlers before use
-	});
-});
+	};
+};
 
-console.log("Establishing MySQL connection");
+logger.i("Init", "Establishing MySQL connection");
 const mySQLconnection = require("./src/mySQLconnection.js");
 
-console.log("Generating secret key for JSON Web Token");
+logger.i("Init", "Generating secret key for JSON Web Token");
 const JWTsecret = require("./src/JWTsecret.js");
 
 
@@ -133,3 +140,8 @@ serverStructure.forEach(function (serverData) {
 	});
 });
 
+process.on('uncaughtException', (e) => {
+	logger.e("Unknown", "Uncaught process exception", e);
+});
+
+throw(new Error("reeeee"));
