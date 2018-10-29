@@ -56,7 +56,7 @@
 			},
 			{
 				"webAddress": "/api/v1/media/image",
-				"aliases": ["/image", "/image/[0-9A-Fa-f]{32}", "/api/media/image", "/api/media/image/[0-9A-Fa-f]{32}"],
+				"aliases": ["/image/[0-9A-Fa-f]{32}", "/api/media/image/[0-9A-Fa-f]{32}"],
 				"logicHandler": "./src/api/media/imageFetch.js",
 				"acceptedMethod": "GET"
 			},
@@ -124,6 +124,12 @@
 				"webAddress": "/api/v1/accounts/state",
 				"aliases": ["/api/accounts/state"],
 				"logicHandler": "./src/api/accounts/checkLoginState.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/accounts/usernameAvailability",
+				"aliases": ["/api/accounts/usernameAvailability"],
+				"logicHandler": "./src/api/accounts/checkDisplayNameAvailability.js",
 				"acceptedMethod": "GET"
 			}
 		]

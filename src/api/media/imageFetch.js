@@ -6,21 +6,11 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 
 	httpBodyParser(request, responseJSON, function(body) {
-		let tryUrlParse = truncatedUrl.match(/\/[0-9A-Fa-f]{32}/g) ? true : false;
-		let imageHashValue = fullHeaders.h || (tryUrlParse ? truncatedUrl.match(/[0-9A-Fa-f]{32}/g)[0] : false) || body.h;
+		let imageHashValue = truncatedUrl.match(/[0-9A-Fa-f]{32}/g);
 
 		if (!imageHashValue) {
-			responseJSON.success = false;
-			responseJSON.status = 400;
-			responseJSON.message = "Parameter `h` is required";
-			responseSetting.setResponseFullJSON(response, responseJSON);
-			return;
-		}
-		if (!imageHashValue.match(/^[0-9A-Fa-f]{32}$/g)) {
-			responseJSON.success = false;
-			responseJSON.status = 400;
-			responseJSON.message = "Parameter `h` is in an improper format";
-			responseSetting.setResponseFullJSON(response, responseJSON);
+			responseSetting.setResponseFullHTML(response, 404);
+			response.end();
 			return;
 		}
 
