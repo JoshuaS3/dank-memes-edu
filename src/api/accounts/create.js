@@ -78,7 +78,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 							responseSetting.setResponseFullJSON(response, responseJSON);
 							return;
 						}
-						if (decoded.accountCreation) {
+						if (decoded.pageValidation) {
 							if (!displayName) {
 								responseJSON.success = false;
 								responseJSON.status = 400;

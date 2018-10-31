@@ -14,8 +14,7 @@
 						<div class="form-group" id="create-form">
 							<script type="text/javascript">
 								$(document).ready(function(){
-									$.getJSON('/api/accounts/createToken', null, function(result) {
-										console.log(result);
+									$.getJSON('/api/authentication/pageValidation', null, function(result) {
 										$("#create-form").append('<input type="hidden" name="verToken" value="' + result.data + '">')
 									});
 								});

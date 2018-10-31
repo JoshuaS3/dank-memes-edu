@@ -101,12 +101,6 @@
 				"acceptedMethod": "POST"
 			},
 			{
-				"webAddress": "/api/v1/accounts/createToken",
-				"aliases": ["/api/accounts/createToken"],
-				"logicHandler": "./src/api/accounts/createToken.js",
-				"acceptedMethod": "GET"
-			},
-			{
 				"webAddress": "/api/v1/accounts/login",
 				"aliases": ["/api/accounts/login"],
 				"logicHandler": "./src/api/accounts/login.js",
@@ -140,6 +134,14 @@
 				"webAddress": "/api/v1/accounts/usernameAvailability",
 				"aliases": ["/api/accounts/usernameAvailability"],
 				"logicHandler": "./src/api/accounts/checkDisplayNameAvailability.js",
+				"acceptedMethod": "GET"
+			},
+
+
+			{
+				"webAddress": "/api/v1/authentication/pageValidation",
+				"aliases": ["/api/authentication/pageValidation"],
+				"logicHandler": "./src/api/authentication/pageValidation.js",
 				"acceptedMethod": "GET"
 			}
 		]

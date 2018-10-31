@@ -10,7 +10,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	responseJSON.status = 200;
 	let allowCreationToken = jwt.sign(
 		{
-			accountCreation: true,
+			pageValidation: true,
 			exp: Math.floor(Date.now() / 1000) + 3600,
 			uuid: uuidv4()
 		}
