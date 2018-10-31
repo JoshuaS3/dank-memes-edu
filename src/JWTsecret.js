@@ -23,10 +23,10 @@ function checkForOldSecrets() {
 	let now = new Date();
 	for (var secretIndex in secrets) {
 		secret = secrets[secretIndex];
-		if ((now - secret.dateCreated) > one_day) {
+		if ((now - secret.dateCreated) > one_day*30) {
 			let position = secrets.indexOf(secret);
 			secrets.slice(position, position);
-			logger.d("JsonWebToken","Removed a secret key older than 24 hours");
+			logger.d("JsonWebToken","Removed a secret key older than a month");
 		}
 	};
 	if (secrets.length == 0) {
