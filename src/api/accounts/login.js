@@ -80,7 +80,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								}
 								let verifiedLogin = {
 									userId: results[0].id,
-									exp: Math.floor(Date.now() / 1000) + 3600,
+									exp: Math.floor(Date.now() / 1000) + 2592000,
 									uuid: uuidv4()
 								}
 								let authToken = jwt.sign(verifiedLogin);
