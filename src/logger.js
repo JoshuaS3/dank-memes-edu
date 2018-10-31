@@ -72,7 +72,7 @@ function warn(tag, message) {
 }
 function error(tag, message, error) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n" + error.toString() + "\n";
+	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n" + error.stack + "\n";
 	addToQueue(compiled, now);
 	write();
 }
