@@ -17,6 +17,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 403;
 			responseJSON.message = "Auth token `verToken` is required";
+			response.setHeader("Set-Cookie", [`authToken=${null}`]);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -24,6 +25,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `password` is required";
+			response.setHeader("Set-Cookie", [`authToken=${null}`]);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -31,6 +33,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `displayName` is required";
+			response.setHeader("Set-Cookie", [`authToken=${null}`]);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -40,12 +43,14 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					responseJSON.success = false;
 					responseJSON.status = 403;
 					responseJSON.message = "Auth token `verToken` has expired";
+					response.setHeader("Set-Cookie", [`authToken=${null}`]);
 					responseSetting.setResponseFullJSON(response, responseJSON);
 					return;
 				}
 				responseJSON.success = false;
 				responseJSON.status = 403;
 				responseJSON.message = "Auth token `verToken` is invalid";
+				response.setHeader("Set-Cookie", [`authToken=${null}`]);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -56,6 +61,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 						responseJSON.success = false;
 						responseJSON.status = 500;
 						responseJSON.message = err.toString();
+						response.setHeader("Set-Cookie", [`authToken=${null}`]);
 						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
@@ -68,6 +74,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								responseJSON.success = false;
 								responseJSON.status = 500;
 								responseJSON.message = err.toString();
+								response.setHeader("Set-Cookie", [`authToken=${null}`]);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							}
@@ -76,10 +83,12 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								responseJSON.status = 200;
 								responseJSON.message = "Successfully logged in";
 								responseJSON.data = {
-									userid: results[0].id
+									userid: results[0].id,
+									displayName: displayName
 								}
 								let verifiedLogin = {
 									userId: results[0].id,
+									displayName: displayName,
 									exp: Math.floor(Date.now() / 1000) + 2592000,
 									uuid: uuidv4()
 								}
@@ -91,6 +100,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								responseJSON.success = false;
 								responseJSON.status = 400;
 								responseJSON.message = "Incorrect password";
+								response.setHeader("Set-Cookie", [`authToken=${null}`]);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 							}
 						});
@@ -98,6 +108,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 						responseJSON.success = false;
 						responseJSON.status = 400;
 						responseJSON.message = "Account does not exist";
+						response.setHeader("Set-Cookie", [`authToken=${null}`]);
 						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
@@ -106,6 +117,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 403;
 				responseJSON.message = "Auth token `verToken` is invalid";
+				response.setHeader("Set-Cookie", [`authToken=${null}`]);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}

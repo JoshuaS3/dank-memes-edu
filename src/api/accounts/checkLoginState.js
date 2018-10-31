@@ -1,1 +1,0 @@
-module.exports = function(request, fullHeaders, response, truncatedUrl) {}

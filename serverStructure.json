@@ -127,7 +127,7 @@
 			{
 				"webAddress": "/api/v1/accounts/state",
 				"aliases": ["/api/accounts/state"],
-				"logicHandler": "./src/api/accounts/checkLoginState.js",
+				"logicHandler": "./src/api/accounts/state.js",
 				"acceptedMethod": "GET"
 			},
 			{

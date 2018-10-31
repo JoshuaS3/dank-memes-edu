@@ -130,11 +130,29 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 										responseSetting.setResponseFullJSON(response, responseJSON);
 										return;
 									}
-									responseJSON.success = true;
-									responseJSON.status = 200;
-									responseJSON.message = "Successfully registered";
-									responseSetting.setResponseFullJSON(response, responseJSON);
-									return;
+									let query = "SELECT id FROM `joshuas3`.`accounts` WHERE displayName = ? ";
+									mySQLconnection.query(query, [displayName], function(err, results) {
+										if (err) {
+											responseJSON.success = true;
+											responseJSON.status = 200;
+											responseJSON.message = "Successfully registered";
+											responseSetting.setResponseFullJSON(response, responseJSON);
+											return;
+										}
+										let verifiedLogin = {
+											userId: results[0].id,
+											displayName: displayName,
+											exp: Math.floor(Date.now() / 1000) + 2592000,
+											uuid: uuidv4()
+										}
+										let authToken = jwt.sign(verifiedLogin);
+										responseJSON.success = true;
+										responseJSON.status = 200;
+										responseJSON.message = "Successfully registered";
+										response.setHeader("Set-Cookie", [`authToken=${authToken}`]);
+										responseSetting.setResponseFullJSON(response, responseJSON);
+										return;
+									})
 								});
 							});
 						} else {
