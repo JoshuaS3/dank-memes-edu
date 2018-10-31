@@ -5,3 +5,5 @@ mySqlConfig.json
 *.sublime-project
 *.sublime-workspace
 *.log
+JWTsecrets.json
+reCAPTCHAsecret.json
