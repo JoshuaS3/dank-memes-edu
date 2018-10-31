@@ -7,3 +7,4 @@ mySqlConfig.json
 *.log
 JWTsecrets.json
 reCAPTCHAsecret.json
+node_modules/
