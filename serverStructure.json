@@ -31,6 +31,16 @@
 					"TOPBAR": "static/topbar.html",
 					"ALERTS": "static/alerts.html"
 				}
+			},
+			{
+				"webAddress": "/login",
+				"aliases": [],
+				"localResponseFile": "static/html/login.html",
+				"fragments": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
 			}
 		],
 		"apiEndpoints": [
