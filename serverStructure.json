@@ -43,6 +43,12 @@
 				}
 			}
 		],
+		"javascript": [
+			{
+				"webAddress": "/js/loginState.js",
+				"localResponseFile": "static/js/loginState.js"
+			}
+		],
 		"apiEndpoints": [
 			{
 				"webAddress": "/api/v1/media/image",
