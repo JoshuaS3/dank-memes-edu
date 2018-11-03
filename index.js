@@ -120,6 +120,21 @@ serverStructure.forEach(function (serverData) {
 		});
 		if (responseSent) return;
 
+		serverData.javascript.forEach(function (javascriptPageData) { // server static pages to users
+			if (responseSent) return;
+			if (addressChecker(truncatedUrl, javascriptPageData)) {
+				let staticPath = path.join(__dirname, javascriptPageData.localResponseFile);
+				if (fs.existsSync(staticPath)) { // if the file exists
+					let staticPageResponseContent = fs.readFileSync(staticPath).toString(); // read from file
+					responseSetting.setResponseHeader(response, 200, 'text/javascript');
+					response.write(staticPageResponseContent);
+					response.end();
+					responseSent = true;
+				}
+			}
+		});
+		if (responseSent) return;
+
 
 		if (!responseSent) { // none of the iterated pages matches the request URL, 404 not found
 			responseSetting.setResponseFullHTML(response, 404);

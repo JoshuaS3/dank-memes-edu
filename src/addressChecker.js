@@ -7,14 +7,16 @@ module.exports = function (requestUrl, pageData) {
 		)
 	);
 	
-	pageData.aliases.forEach(function (alias) {
-		regexs.push(
-			new RegExp(
-				("^" + alias.replace(/\//g, "\\/") + "$"),
-				"g"
-			)
-		);
-	});
+	if (pageData.aliases) {
+		pageData.aliases.forEach(function (alias) {
+			regexs.push(
+				new RegExp(
+					("^" + alias.replace(/\//g, "\\/") + "$"),
+					"g"
+				)
+			);
+		});
+	}
 
 	let gotMatch = false;
 	regexs.forEach(function (regex) {
