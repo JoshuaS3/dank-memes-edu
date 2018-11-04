@@ -8,3 +8,4 @@ mySqlConfig.json
 JWTsecrets.json
 reCAPTCHAsecret.json
 node_modules/
+*.map
