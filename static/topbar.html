@@ -3,20 +3,21 @@
 				<a class="navbar-brand float-left" href="/">dankmemes.edu</a>
 				<div class="collapse navbar-collapse float-right" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto mt-2 mt-lg-0" id="topbar-nav-list">
-						<li class="nav-item">
-							<a class="nav-link" href="/login">Sign In</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="/register">Register</a>
-						</li>
 						<script type="text/javascript">
-							$(document).ready(function(){
-								$.getJSON('/api/accounts/state', null, function(result) {
-									if (result.success) {
-										$("#topbar-nav-list").append(`<li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>`);
-									}
-								});
-							});
+function logout() {
+	document.cookie = "";
+	location.reload();
+}
+$(document).ready(function(){
+	checkLoginState(function(loginState) {
+		if (loginState.success) {
+			$("#topbar-nav-list").append(`<li class="nav-item logout-button"><a class="nav-link" onclick="logout()" href="#">Log Out</a></li>`);
+		} else {
+			$("#topbar-nav-list").append(`<li class="nav-item"><a class="nav-link" href="/login">Sign In</a></li>`);
+			$("#topbar-nav-list").append(`<li class="nav-item"><a class="nav-link" href="/register">Register</a></li>`);
+		}
+	});
+});
 						</script>
 					</ul>
 				</div>
