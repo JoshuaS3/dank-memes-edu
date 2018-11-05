@@ -1,11 +1,11 @@
 const logger = require("../../logger.js");
 const responseSetting = require("../../responseSetting.js");
 const jwt = require("../../JWTsecret.js");
-const querystring = require("querystring");
+const cookie = require("cookie");
 
 module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
-	let cookies = querystring.parse(fullHeaders.cookie);
+	let cookies = cookie.parse(fullHeaders.cookie || "");
 	if (!cookies.authToken) {
 		responseJSON.success = false;
 		responseJSON.status = 400;

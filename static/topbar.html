@@ -5,13 +5,13 @@
 					<ul class="navbar-nav mr-auto mt-2 mt-lg-0" id="topbar-nav-list">
 						<script type="text/javascript">
 function logout() {
-	document.cookie = "";
+	document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	location.reload();
 }
 $(document).ready(function(){
 	checkLoginState(function(loginState) {
 		if (loginState.success) {
-			$("#topbar-nav-list").append(`<li class="nav-item logout-button"><a class="nav-link" onclick="logout()" href="#">Log Out</a></li>`);
+			$("#topbar-nav-list").append(`<li class="nav-item logout-button"><a class="nav-link" href="/api/accounts/logout">Log Out</a></li>`);
 		} else {
 			$("#topbar-nav-list").append(`<li class="nav-item"><a class="nav-link" href="/login">Sign In</a></li>`);
 			$("#topbar-nav-list").append(`<li class="nav-item"><a class="nav-link" href="/register">Register</a></li>`);

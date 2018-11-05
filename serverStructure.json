@@ -116,7 +116,7 @@
 				"webAddress": "/api/v1/accounts/logout",
 				"aliases": ["/api/accounts/logout"],
 				"logicHandler": "./src/api/accounts/logout.js",
-				"acceptedMethod": "POST"
+				"acceptedMethod": "GET"
 			},
 			{
 				"webAddress": "/api/v1/accounts/delete",
