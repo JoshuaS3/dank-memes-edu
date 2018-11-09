@@ -3,9 +3,16 @@
 		"activePorts": [8080],
 		"staticServing": [
 			{
+				"webAddress": "/favicon.png",
+				"localResponseFile": "static/favicon.png",
+				"mime": "image/png",
+				"binary": true
+			},
+			{
 				"webAddress": "",
 				"aliases": ["/index"],
 				"localResponseFile": "static/html/index.html",
+				"mime": "text/html",
 				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
@@ -14,8 +21,8 @@
 			},
 			{
 				"webAddress": "/alerts",
-				"aliases": [],
 				"localResponseFile": "static/html/alertsConfig.html",
+				"mime": "text/html",
 				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
@@ -24,8 +31,8 @@
 			},
 			{
 				"webAddress": "/register",
-				"aliases": [],
 				"localResponseFile": "static/html/register.html",
+				"mime": "text/html",
 				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
@@ -34,19 +41,18 @@
 			},
 			{
 				"webAddress": "/login",
-				"aliases": [],
 				"localResponseFile": "static/html/login.html",
+				"mime": "text/html",
 				"fragments": {
 					"HEADER": "static/header.html",
 					"TOPBAR": "static/topbar.html",
 					"ALERTS": "static/alerts.html"
 				}
-			}
-		],
-		"javascript": [
+			},
 			{
 				"webAddress": "/js/loginState.js",
-				"localResponseFile": "static/js/loginState.js"
+				"localResponseFile": "static/js/loginState.js",
+				"mime": "text/javascript"
 			}
 		],
 		"apiEndpoints": [

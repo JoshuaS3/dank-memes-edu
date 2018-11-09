@@ -97,38 +97,35 @@ serverStructure.forEach(function (serverData) {
 
 				let staticPath = path.join(__dirname, staticPageData.localResponseFile);
 				if (fs.existsSync(staticPath)) { // if the file exists
-					let staticPageResponseContent = fs.readFileSync(staticPath).toString(); // read from file
+					let staticPageResponseContent;
+					if (staticPageData.binary) {
+						staticPageResponseContent = fs.readFileSync(staticPath); // read from file
+					} else {
+						staticPageResponseContent = fs.readFileSync(staticPath).toString(); // read from file
+					}
 
-					for (var fragmentName in staticPageData.fragments) { // file may be split into fragments
-						fragmentPath = staticPageData.fragments[fragmentName];
+					if (staticPageData.fragments && !staticPageData.binary) {
+						for (var fragmentName in staticPageData.fragments) { // file may be split into fragments
+							fragmentPath = staticPageData.fragments[fragmentName];
 
-						if (fs.existsSync(fragmentPath)) { // if fragment exists
+							if (fs.existsSync(fragmentPath)) { // if fragment exists
 
-							let fragmentContent = fs.readFileSync(fragmentPath).toString(); // read content of fragment
-							staticPageResponseContent = staticPageResponseContent.replace(`<@${fragmentName}>`, fragmentContent); // place fragment in full file
-						
-						} else { // no such fragment exists
-							staticPageResponseContent = staticPageResponseContent.replace(`<@${fragmentName}>`, ""); // remove snippet from code
+								let fragmentContent = fs.readFileSync(fragmentPath).toString(); // read content of fragment
+								staticPageResponseContent = staticPageResponseContent.replace(`<@${fragmentName}>`, fragmentContent); // place fragment in full file
+							
+							} else { // no such fragment exists
+								staticPageResponseContent = staticPageResponseContent.replace(`<@${fragmentName}>`, ""); // remove snippet from code
+							}
 						}
 					}
-					responseSetting.setResponseHeader(response, 200, 'text/html');
-					response.write(staticPageResponseContent);
-					response.end();
-					responseSent = true;
-				}
-			}
-		});
-		if (responseSent) return;
-
-		serverData.javascript.forEach(function (javascriptPageData) { // server static pages to users
-			if (responseSent) return;
-			if (addressChecker(truncatedUrl, javascriptPageData)) {
-				let staticPath = path.join(__dirname, javascriptPageData.localResponseFile);
-				if (fs.existsSync(staticPath)) { // if the file exists
-					let staticPageResponseContent = fs.readFileSync(staticPath).toString(); // read from file
-					responseSetting.setResponseHeader(response, 200, 'text/javascript');
-					response.write(staticPageResponseContent);
-					response.end();
+					responseSetting.setResponseHeader(response, 200, staticPageData.mime);
+					logger.i("asdf", JSON.stringify(staticPageData));
+					if (staticPageData.binary) {
+						response.end(staticPageResponseContent, 'binary');
+					} else {
+						response.write(staticPageResponseContent);
+						response.end();
+					}
 					responseSent = true;
 				}
 			}
