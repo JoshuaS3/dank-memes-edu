@@ -10,6 +10,7 @@
   "license": "GPL-3.0",
   "repository": "https://www.github.com/joshuas3/dank-memes-edu.git",
   "dependencies": {
+    "aws-sdk": "^2.351.0",
     "cookie": "^0.3.1",
     "express.js": "^1.0.0",
     "formidable": "^1.2.1",
