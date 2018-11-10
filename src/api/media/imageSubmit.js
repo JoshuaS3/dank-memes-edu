@@ -4,7 +4,7 @@ const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const fs = require("fs");
 
-const mime = ['image/jpeg', 'image/png']
+const mime = ['image/jpeg', 'image/png', 'image/gif']
 
 module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
