@@ -1,6 +1,7 @@
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const httpBodyParser = require("../../httpBodyParser.js");
+const logger = require("../../logger.js");
 
 module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
@@ -13,6 +14,8 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			response.end();
 			return;
 		}
+
+		logger.v("Request", `Request made to fetch image ID ${imageHashValue}`);
 
 
 		let query = "SELECT * FROM `joshuas3`.`images` WHERE id = ? ";
@@ -32,6 +35,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 
 			let htmlCode = 200;
 			responseSetting.setResponseHeader(response, htmlCode, result[0].mime);
+			logger.v("Request", `Responding to request for image ID ${imageHashValue}`);
 			response.end(result[0].image, 'binary');
 			return true;
 		});

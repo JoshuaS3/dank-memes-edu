@@ -3,6 +3,7 @@ const formidable = require("formidable");
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const fs = require("fs");
+const logger = require("../../logger.js");
 
 const mime = ['image/jpeg', 'image/png', 'image/gif']
 

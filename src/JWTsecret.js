@@ -17,9 +17,10 @@ function secretKeyGen() {
 
 let secrets = JSON.parse(fs.readFileSync(pathToSecrets).toString());
 
-const one_day = 10*1000;
+const one_day = 1000 * 60 * 60 * 24;
 
 function checkForOldSecrets() {
+	logger.vv("JsonWebToken","Checking for old secrets");
 	let now = new Date();
 	for (var secretIndex in secrets) {
 		secret = secrets[secretIndex];
@@ -52,14 +53,14 @@ function verify(data, callback) {
 				if (err) {
 					throw err;
 				}
-				logger.v("JsonWebToken", "Successful verification");
+				logger.vv("JsonWebToken", "Successful verification");
 				callback(null, verified); // no error caught, correct signature and payload
 				success = true;
 				return;
 			});
 		} catch (e) {
 			if (e.name == "TokenExpiredError") { // correct signature, just an old token
-				logger.v("JsonWebToken", "TokenExpiredError");
+				logger.vv("JsonWebToken", "TokenExpiredError");
 				callback(e, null);
 				return;
 			}
@@ -67,7 +68,7 @@ function verify(data, callback) {
 		}
 	};
 	if (success) return;
-	logger.v("JsonWebToken", "JsonWebTokenError");
+	logger.vv("JsonWebToken", "JsonWebTokenError");
 	callback(error, null);
 }
 

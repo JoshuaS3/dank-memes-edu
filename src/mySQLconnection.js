@@ -13,19 +13,19 @@ module.exports = {
 			args.push(arguments[i]);
 		}
 		var callback = args[args.length-1];
-		logger.v("MySQL", "Attempting connect to server");
+		logger.vv("MySQL", "Attempting connect to server");
 		pool.getConnection(function(err, connection) {
 			if(err) {
 				logger.e("MySQL", "Connection error", err);
 				return callback(err);
 			}
-			logger.v("MySQL", "Connected to server");
+			logger.vv("MySQL", "Connected to server");
 			if(args.length > 2){
 				sql_args = args[1];
 			}
 			logger.v("MySQL", `Attempting query ${args[0]}`);
 			connection.query(args[0], sql_args, function(err, results) {
-				logger.v("MySQL", "Releasing connection");
+				logger.vv("MySQL", "Releasing connection");
 				connection.release();
 				if(err){
 					logger.e("MySQL", "Query error", err);

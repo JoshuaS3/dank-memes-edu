@@ -1,5 +1,6 @@
 const qs = require("querystring");
 const responseSetting = require("./responseSetting.js");
+const logger = require("./logger.js");
 
 module.exports = function (request, responseJSON, callback) {
 	let responseSent = false;
@@ -7,6 +8,7 @@ module.exports = function (request, responseJSON, callback) {
 
 	request.on('data', (chunk) => {
 		if (responseSent) return;
+		logger.vv("HttpBodyParsing", "Receiving data, parsing...");
 		if (body > 2.1e7) { // 21MB
 			let responseJSON = {};
 			responseJSON.success = false;
@@ -14,6 +16,8 @@ module.exports = function (request, responseJSON, callback) {
 			responseJSON.message = "Payload too large";
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			responseSent = true;
+			request.connection.end();
+			logger.vv("HttpBodyParsing", "Too much data received, connection ended.");
 			return;
 		}
 		body += chunk;
@@ -21,6 +25,7 @@ module.exports = function (request, responseJSON, callback) {
 
 
 	request.on('end', () => {
+		logger.vv("HttpBodyParsing", "Finished receiving data.");
 		body = qs.parse(body);
 		callback(body);
 	});
