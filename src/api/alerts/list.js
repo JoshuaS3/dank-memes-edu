@@ -5,16 +5,16 @@ module.exports = function(request, fullHeaders, response, responseJSON) {
 	let query = "SELECT * FROM joshuas3.alerts"
 	mySQLconnection.query(query, function(err, results) {
 		if (err) {
-			responseJSON.code = 500;
-			responseJSON.status = "error";
+			responseJSON.success = false;
+			responseJSON.status = 500;
 			responseJSON.message = err.toString();
-			responseSetting.setResponseFullJSON(response, 500, responseJSON);
+			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
-		responseJSON.code = 200;
-		responseJSON.status = "success";
+		responseJSON.success = true;
+		responseJSON.status = 200;
 		responseJSON.data = results;
-		responseSetting.setResponseFullJSON(response, 200, responseJSON);
+		responseSetting.setResponseFullJSON(response, responseJSON);
 		return;
 	});
 }
