@@ -169,8 +169,8 @@ serverStructure.forEach(function (serverData) {
 					response.end();
 				}
 				responseSent = true;
+				return;
 			}
-			return;
 		} else {
 			serverData.staticServing.forEach(function (staticPageData) { // server static pages to users
 				if (responseSent) return;
