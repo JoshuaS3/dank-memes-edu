@@ -74,6 +74,9 @@ elif [ "$1" == "log" ]; then
 		if [ ${VERBOSITY} == "VERBOSE" ]; then
 			VERBOSITY="INFO|DEBUG|VERBOSE|ERROR|WARN";
 		fi
+		if [ ${VERBOSITY} == "VERY_VERBOSE" ]; then
+			VERBOSITY="INFO|DEBUG|VERBOSE|VERY_VERBOSE|ERROR|WARN";
+		fi
 	fi
 	if [ -n "$3" ]; then
 		TAG=$(echo "$3" | tr a-z A-Z)

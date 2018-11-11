@@ -65,6 +65,11 @@ function verbose(tag, message) {
 	let compiled = formatDate(now) + " | VERBOSE | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
 	addToQueue(compiled, now);
 }
+function very_verbose(tag, message) {
+	let now = new Date();
+	let compiled = formatDate(now) + " | VERY_VERBOSE | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
+	addToQueue(compiled, now);
+}
 function warn(tag, message) {
 	let now = new Date();
 	let compiled = formatDate(now) + " | WARN | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
@@ -81,6 +86,7 @@ module.exports = {
 	i: info,
 	d: debug,
 	v: verbose,
+	vv: very_verbose,
 	w: warn,
 	e: error,
 	write: write
