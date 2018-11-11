@@ -17,7 +17,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 403;
 			responseJSON.message = "Auth token `verToken` is required";
-			response.setHeader("Set-Cookie", [`authToken=${null}`]);
+			response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -25,7 +25,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `password` is required";
-			response.setHeader("Set-Cookie", [`authToken=${null}`]);
+			response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -33,7 +33,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `displayName` is required";
-			response.setHeader("Set-Cookie", [`authToken=${null}`]);
+			response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -43,14 +43,14 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					responseJSON.success = false;
 					responseJSON.status = 403;
 					responseJSON.message = "Auth token `verToken` has expired";
-					response.setHeader("Set-Cookie", [`authToken=${null}`]);
+					response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 					responseSetting.setResponseFullJSON(response, responseJSON);
 					return;
 				}
 				responseJSON.success = false;
 				responseJSON.status = 403;
 				responseJSON.message = "Auth token `verToken` is invalid";
-				response.setHeader("Set-Cookie", [`authToken=${null}`]);
+				response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -61,7 +61,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 						responseJSON.success = false;
 						responseJSON.status = 500;
 						responseJSON.message = err.toString();
-						response.setHeader("Set-Cookie", [`authToken=${null}`]);
+						response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
@@ -74,7 +74,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								responseJSON.success = false;
 								responseJSON.status = 500;
 								responseJSON.message = err.toString();
-								response.setHeader("Set-Cookie", [`authToken=${null}`]);
+								response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							}
@@ -93,14 +93,14 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 									uuid: uuidv4()
 								}
 								let authToken = jwt.sign(verifiedLogin);
-								response.setHeader("Set-Cookie", [`authToken=${authToken}`]);
+								response.setHeader("Set-Cookie", `authToken=${authToken}; Expires=${Math.floor(Date.now() / 1000) + 2592000}; Max-Age=2592000; Path=/`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							} else {
 								responseJSON.success = false;
 								responseJSON.status = 400;
 								responseJSON.message = "Incorrect password";
-								response.setHeader("Set-Cookie", [`authToken=${null}`]);
+								response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 							}
 						});
@@ -108,7 +108,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 						responseJSON.success = false;
 						responseJSON.status = 400;
 						responseJSON.message = "Account does not exist";
-						response.setHeader("Set-Cookie", [`authToken=${null}`]);
+						response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
@@ -117,7 +117,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 403;
 				responseJSON.message = "Auth token `verToken` is invalid";
-				response.setHeader("Set-Cookie", [`authToken=${null}`]);
+				response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
