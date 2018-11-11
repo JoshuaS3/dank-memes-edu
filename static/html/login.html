@@ -8,21 +8,34 @@
 		<@ALERTS>
 		<div class="container mb-4">
 			<div class="row justify-content-center">
-				<div class="col-lg-8">
-					<form action="/api/accounts/login" method="post" enctype="application/x-www-form-urlencoded">
-						<div class="form-group" id="login-form">
-							<script type="text/javascript">
-								$(document).ready(function(){
-									$.getJSON('/api/authentication/pageValidation', null, function(result) {
-										$("#login-form").append('<input type="hidden" name="verToken" value="' + result.data + '">')
-									});
+				<div class="col-lg-4 shadow-lg p-3 mb-2 mt-4">
+					<h1 class="mb-4">Sign In</h1>
+					<div class="form-group mb-0" id="login-form">
+						<script type="text/javascript">
+							$(document).ready(function(){
+								$.getJSON('/api/authentication/pageValidation', null, function(result) {
+									$("#login-form").append('<input type="hidden" name="verToken" value="' + result.data + '">')
 								});
-							</script>
-							<input type="text" class="form-control-sm" name="displayName" placeholder="Username">
-							<input type="password" class="form-control-sm" name="password" placeholder="Password">
-							<input type="submit" class="form-control-submit"></input>
-						</div>
-					</form>
+							});
+							function tryLogin() {
+								$.post("/api/accounts/login", {
+									verToken: $("input[name=verToken]")[0].value,
+									displayName: $("input[name=displayName]")[0].value,
+									password: $("input[name=password]")[0].value
+								}, function(result) {
+									if (result.success) {
+										location = "/";
+									} else {
+
+									}
+								});
+							}
+						</script>
+						<input type="text" class="form-control w-100 mb-2" name="displayName" placeholder="Username">
+						<input type="password" class="form-control w-100 mb-2" name="password" placeholder="Password">
+						<button type="submit" onclick="tryLogin()" class="btn btn-success form-control-submit w-100 pt-2 pb-2">Login</button>
+						<p class="text-dark mt-2 mb-0 pb-0">Not a member? <a href="/register">Sign up.</a></p>
+					</div>
 				</div>
 			</div>
 		</div>
