@@ -50,6 +50,16 @@
 				}
 			},
 			{
+				"webAddress": "/post",
+				"localResponseFile": "static/html/post.html",
+				"mime": "text/html",
+				"fragments": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
+			},
+			{
 				"webAddress": "/js/loginState.js",
 				"localResponseFile": "static/js/loginState.js",
 				"mime": "text/javascript"
@@ -148,12 +158,28 @@
 				"logicHandler": "./src/api/accounts/checkDisplayNameAvailability.js",
 				"acceptedMethod": "GET"
 			},
-
-
 			{
 				"webAddress": "/api/v1/authentication/pageValidation",
 				"aliases": ["/api/authentication/pageValidation"],
 				"logicHandler": "./src/api/authentication/pageValidation.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/posts/post",
+				"aliases": ["/api/posts/post"],
+				"logicHandler": "./src/api/posts/info.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/posts/post",
+				"aliases": ["/api/posts/post"],
+				"logicHandler": "./src/api/posts/create.js",
+				"acceptedMethod": "POST"
+			},
+			{
+				"webAddress": "/api/v1/posts/list",
+				"aliases": ["/api/posts/list"],
+				"logicHandler": "./src/api/posts/list.js",
 				"acceptedMethod": "GET"
 			}
 		]
