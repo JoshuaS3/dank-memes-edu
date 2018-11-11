@@ -52,27 +52,27 @@ function addToQueue(compiled, now) {
 
 function info(tag, message) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | INFO | " + tag.toUpperCase() + " | " + message + "\n";
+	let compiled = formatDate(now) + " | INFO | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
 	addToQueue(compiled, now);
 }
 function debug(tag, message) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | DEBUG | " + tag.toUpperCase() + " | " + message + "\n";
+	let compiled = formatDate(now) + " | DEBUG | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
 	addToQueue(compiled, now);
 }
 function verbose(tag, message) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | VERBOSE | " + tag.toUpperCase() + " | " + message + "\n";
+	let compiled = formatDate(now) + " | VERBOSE | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
 	addToQueue(compiled, now);
 }
 function warn(tag, message) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | WARN | " + tag.toUpperCase() + " | " + message + "\n";
+	let compiled = formatDate(now) + " | WARN | " + tag.toUpperCase() + " | " + message + "{EOT}\n";
 	addToQueue(compiled, now);
 }
 function error(tag, message, error) {
 	let now = new Date();
-	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n" + error.stack + "\n";
+	let compiled = formatDate(now) + " | ERROR | " + tag.toUpperCase() + " | " + message + "\n" + error.stack + "{EOT}\n";
 	addToQueue(compiled, now);
 	write();
 }

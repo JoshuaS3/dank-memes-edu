@@ -79,7 +79,7 @@ elif [ "$1" == "log" ]; then
 		TAG=$(echo "$3" | tr a-z A-Z)
 	fi
 	FILE=$(ls -t logs | head -1)
-	cat logs/${FILE} | grep -Pzo ".*\|\ (?:${VERBOSITY})\ \|\ (?:${TAG})\ \|\ .*[\n]([^0-9].*)?"
+	cat logs/${FILE} | grep -oP ".*\|\ (?:${VERBOSITY})\ \|\ (?:${TAG})\ \|\ .*?(?:[\n].*?)*(?={EOT})"
 else
 	if [ -z $(ps -ef | awk '/[n]ode/{print $2}') ]; then
 		echo -e "${RED}BOT OFFLINE${CYAN} - No identifiable node instance is currently running. Run ${YELLOW}./status.sh start ${CYAN} to start the bot."
