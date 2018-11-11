@@ -149,7 +149,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 										responseJSON.success = true;
 										responseJSON.status = 200;
 										responseJSON.message = "Successfully registered";
-										response.setHeader("Set-Cookie", [`authToken=${authToken}`]);
+										response.setHeader("Set-Cookie", `authToken=${authToken}; Expires=${Math.floor(Date.now() / 1000) + 2592000}; Max-Age=2592000; Path=/`);
 										responseSetting.setResponseFullJSON(response, responseJSON);
 										return;
 									})
