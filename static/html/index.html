@@ -9,24 +9,60 @@
 		<div class="container mb-4 mt-4">
 			<div class="row justify-content-center">
 				<div class="col-lg-8" id="list">
-					<form action="/api/media/image" method="post" enctype="multipart/form-data">
-						<div class="form-group">
-							<label for="exampleFormControlFile1">Upload a file to dankmemes.edu</label>
-							<input type="file" class="form-control-file" id="exampleFormControlFile1" name="filetoupload">
-							<input type="submit" class="form-control-submit"></input>
-						</div>
-					</form>
 					<script type="text/javascript">
-						$(document).ready(function(){
-							$.getJSON('/api/media/list?count=20', null, function(result) {
-								console.log(result);
-								for (var i in result.data.ids) {
-									let hash = result.data.ids[i];
-									let hashUrl = '/image/' + hash;
-									$("#list").append('<div class="shadow-lg p-3 mb-2 mt-4"><img class="d-block img-fluid w-100" src="' + hashUrl + '"/></div>')
-								}
-							});
-						});
+function timeSince(date) {
+	let seconds = Math.floor((new Date() - date) / 1000);
+	let interval;
+	let x;
+
+	function check(string) {
+		if (interval > 1) {
+			return interval + " " + string + "s";
+		} else if (interval > 0) {
+			return interval + " " + string;
+		}
+		return false;
+	}
+
+	interval = Math.floor(seconds / 31536000);
+	x = check("year"); if (x) return x;
+
+	interval = Math.floor(seconds / 2592000);
+	x = check("month"); if (x) return x;
+
+	interval = Math.floor(seconds / 86400);
+	x = check("day"); if (x) return x;
+
+	interval = Math.floor(seconds / 3600);
+	x = check("hour"); if (x) return x;
+
+	interval = Math.floor(seconds / 60);
+	x = check("minute"); if (x) return x;
+
+	return seconds + " seconds"
+}
+
+let oneday = 24*60*60*1000;
+
+$(document).ready(function(){
+	checkLoginState(function(loginState) {
+		if (loginState.success) {
+			$("#list").prepend("<h2>Hello, " + loginState.data.displayName + "!</h2>");
+		} else {
+			$("#list").prepend("<h3>Want to get posting memes? Create an account to get started!</h3>");
+		}
+	});
+	$.getJSON('/api/posts/list?count=20', null, function(result) {
+		result.data.forEach(function(post) {
+			let hash = post.imageid;
+			let hashUrl = '/image/' + hash;
+			let postObject = $('<div class="shadow-lg p-3 mb-2 mt-4"><h3>' + post.title + '</h3><span class="author">by</span><span class="float-right"><i>' + timeSince(new Date(post.dateCreated)) + ' ago</i></span><img class="d-block img-fluid w-100 mt-2" src="' + hashUrl + '"/></div>').appendTo("#list");
+			$.getJSON('/api/accounts/info', {id: post.uid}, function(userInfo) {
+				postObject[0].children[1].innerText = "by " + userInfo.data.displayName;
+			});
+		});
+	});
+});
 					</script>
 				</div>
 			</div>
