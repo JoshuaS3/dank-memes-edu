@@ -16,10 +16,11 @@ function displayNameTaken(name, callback) {
 			return true;
 		}
 		if (result[0]) {
-			logger.v("AccountCreation", "Requested account name already taken");
+			logger.v("AccountsCheckName", `Request to check for username availability processed; username '${name}' is taken`);
 			callback(true);
 			return;
 		}
+		logger.v("AccountsCheckName", `Request to check for username availability processed; username '${name}' is available`);
 		callback(false);
 		return;
 	});
@@ -30,6 +31,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 
 	httpBodyParser(request, responseJSON, function(body){
+		logger.v("AccountsCreate", `Processing request to create a new account...`);
 		let verToken = body.verToken || null;
 		let firstName = body.firstName || null;
 		let lastName = body.lastName || null;
@@ -42,6 +44,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.status = 403;
 			responseJSON.message = "Auth token `verToken` is required";
 			responseSetting.setResponseFullJSON(response, responseJSON);
+			logger.v("AccountsCreate", `Request to create a new account returned false for invalid authentication`);
 			return;
 		}
 		if (!recaptcha) {
@@ -49,6 +52,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.status = 403;
 			responseJSON.message = "Auth token `g-recaptcha-response` is required";
 			responseSetting.setResponseFullJSON(response, responseJSON);
+			logger.v("AccountsCreate", `Request to create a new account returned false for invalid authentication`);
 			return;
 		}
 		httpRequest(
@@ -60,6 +64,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					responseJSON.status = 403;
 					responseJSON.message = "Auth token `g-recaptcha-response` is invalid";
 					responseSetting.setResponseFullJSON(response, responseJSON);
+					logger.v("AccountsCreate", `Request to create a new account returned false for invalid authentication`);
 					return;
 				}
 				if (requestHttpBody.success) {
@@ -69,12 +74,14 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								responseJSON.success = false;
 								responseJSON.status = 403;
 								responseJSON.message = "Auth token `verToken` has expired";
+								logger.v("AccountsCreate", `Request to create a new account returned false for invalid authentication`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							}
 							responseJSON.success = false;
 							responseJSON.status = 403;
 							responseJSON.message = "Auth token `verToken` is invalid";
+							logger.v("AccountsCreate", `Request to create a new account returned false for invalid authentication`);
 							responseSetting.setResponseFullJSON(response, responseJSON);
 							return;
 						}
@@ -83,6 +90,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								responseJSON.success = false;
 								responseJSON.status = 400;
 								responseJSON.message = "Parameter `displayName` is required";
+								logger.v("AccountsCreate", `Request to create a new account returned false for not supplying a desired username`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							}
@@ -100,6 +108,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 									responseJSON.success = false;
 									responseJSON.status = 400;
 									responseJSON.message = "Parameter `displayName` is longer than 20 characters";
+									logger.v("AccountsCreate", `Request to create a new account returned false for supplying a username longer than 20 characters`);
 									responseSetting.setResponseFullJSON(response, responseJSON);
 									return;
 								}
@@ -107,6 +116,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 									responseJSON.success = false;
 									responseJSON.status = 400;
 									responseJSON.message = "Parameter `password` is required";
+									logger.v("AccountsCreate", `Request to create a new account returned false for not supplying a password`);
 									responseSetting.setResponseFullJSON(response, responseJSON);
 									return;
 								}
@@ -133,9 +143,9 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 									let query = "SELECT id FROM `joshuas3`.`accounts` WHERE displayName = ? ";
 									mySQLconnection.query(query, [displayName], function(err, results) {
 										if (err) {
-											responseJSON.success = true;
-											responseJSON.status = 200;
-											responseJSON.message = "Successfully registered";
+											responseJSON.success = false;
+											responseJSON.status = 500;
+											responseJSON.message = err.toString();
 											responseSetting.setResponseFullJSON(response, responseJSON);
 											return;
 										}
@@ -149,6 +159,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 										responseJSON.success = true;
 										responseJSON.status = 200;
 										responseJSON.message = "Successfully registered";
+										logger.v("AccountsCreate", `Request to create a new account processed`);
 										response.setHeader("Set-Cookie", `authToken=${authToken}; Expires=${Math.floor(Date.now() / 1000) + 2592000}; Max-Age=2592000; Path=/`);
 										responseSetting.setResponseFullJSON(response, responseJSON);
 										return;

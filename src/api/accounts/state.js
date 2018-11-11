@@ -9,11 +9,12 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 
 	httpBodyParser(request, responseJSON, function(body) {
 		let cookies = cookie.parse(fullHeaders.cookie || "");
-		logger.i("asdf", JSON.stringify(cookies));
+		logger.v("AccountsGetState", "Processing request to check for login status");
 		if (!cookies.authToken) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Not signed in";
+			logger.v("AccountsGetState", "Request to check for login status processed; not logged in");
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -22,6 +23,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "Not signed in";
+				logger.v("AccountsGetState", "Request to check for login status processed; not logged in");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -32,6 +34,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				userId: decoded.userId,
 				displayName: decoded.displayName
 			}
+			logger.v("AccountsGetState", "Request to check for login status processed; logged in");
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		});

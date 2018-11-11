@@ -15,6 +15,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			uuid: uuidv4()
 		}
 	)
+	logger.v("Authentication", "New page validation token created");
 	responseJSON.data = allowCreationToken;
 	responseSetting.setResponseFullJSON(response, responseJSON);
 }

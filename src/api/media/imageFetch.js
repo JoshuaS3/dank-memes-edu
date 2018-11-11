@@ -15,7 +15,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			return;
 		}
 
-		logger.v("Request", `Request made to fetch image ID ${imageHashValue}`);
+		logger.v("MediaFetch", `Request made to fetch image ID ${imageHashValue}`);
 
 
 		let query = "SELECT * FROM `joshuas3`.`images` WHERE id = ? ";
@@ -35,7 +35,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 
 			let htmlCode = 200;
 			responseSetting.setResponseHeader(response, htmlCode, result[0].mime);
-			logger.v("Request", `Responding to request for image ID ${imageHashValue}`);
+			logger.v("MediaFetch", `Responding to request for image ID ${imageHashValue}`);
 			response.end(result[0].image, 'binary');
 			return true;
 		});

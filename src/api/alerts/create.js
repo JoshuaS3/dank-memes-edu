@@ -1,3 +1,4 @@
+const logger = require("../../logger.js");
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const httpBodyParser = require("../../httpBodyParser.js");
@@ -10,7 +11,10 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	httpBodyParser(request, responseJSON, function(body) {
 		let content = fullHeaders.content || body.content;
 
+		logger.v("AlertCreate", "Processing request to create alert...");
+
 		if (!content) {
+			logger.v("AlertCreate", "Request to create alert denied because of no content");
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `content` is required"
@@ -21,6 +25,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 		content = content.substr(0, 280); // cap at 280 chars
 
 		if (content.length == 0) {
+			logger.v("AlertCreate", "Request to create alert denied because of no content");
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `content` cannot be an empty string";
@@ -52,6 +57,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 	    	}
+			logger.v("AlertCreate", `Request to create alert processed.`);
 	    	responseJSON.success = true;
 	    	responseJSON.status = 200;
 	    	responseJSON.data = values;

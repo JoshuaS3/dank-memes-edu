@@ -89,5 +89,6 @@ module.exports = {
 	vv: very_verbose,
 	w: warn,
 	e: error,
-	write: write
+	write: write,
+	outputFile: outputFile
 }

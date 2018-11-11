@@ -1,3 +1,4 @@
+const logger = require("../../logger.js");
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const httpBodyParser = require("../../httpBodyParser.js");
@@ -9,11 +10,14 @@ const cookie = require("cookie");
 module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 
+	logger.v("PostsCreate", "Processing request to create a new post");
+
 	let cookies = cookie.parse(fullHeaders.cookie || "");
 	if (!cookies.authToken) {
 		responseJSON.success = false;
 		responseJSON.status = 400;
 		responseJSON.message = "Not signed in";
+		logger.v("PostsCreate", "Request to create a new post denied for not being signed in");
 		responseSetting.setResponseFullJSON(response, responseJSON);
 		return;
 	}
@@ -27,6 +31,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "Not signed in";
+				logger.v("PostsCreate", "Request to create a new post denied for not being signed in");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -34,6 +39,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "Parameter `imageid` is required"
+				logger.v("PostsCreate", "Request to create a new post denied for not supplying an imageid");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -41,6 +47,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "Parameter `title` is required"
+				logger.v("PostsCreate", "Request to create a new post denied for not supplying a title");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -48,6 +55,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "Parameter `title` is longer than 120 characters"
+				logger.v("PostsCreate", "Request to create a new post denied for giving a title longer than 120 characters");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -74,6 +82,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 		    	responseJSON.success = true;
 		    	responseJSON.status = 200;
 		    	responseJSON.data = values;
+		    	logger.v("PostsCreate", "Request to create a new post processed");
 		    	responseSetting.setResponseFullJSON(response, responseJSON);
 		    });
 	    });

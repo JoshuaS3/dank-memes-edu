@@ -127,7 +127,7 @@ serverStructure.forEach(function (serverData) {
 								responseJSON.message = "Incorrect HTTP method used.";
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								responseSent = true;
-								logger.v("Request", "Incorrect HTTP method used, returned 400");
+								logger.v("Response", "Incorrect HTTP method used, returned 400");
 							}
 						});
 					}

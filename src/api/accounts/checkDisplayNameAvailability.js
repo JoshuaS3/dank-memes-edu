@@ -6,6 +6,8 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 	let name = fullHeaders.name || null;
 
+	logger.v("AccountsCheckName", "Processing request to check for username availability...");
+
 	if (!name) {
 		responseJSON.success = false;
 		responseJSON.status = 400;
@@ -29,12 +31,14 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.data = {
 				usernameTaken: true
 			}
+			logger.v("AccountsCheckName", `Request to check for username availability processed; username '${name}' is taken`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
 		responseJSON.data = {
 			usernameTaken: false
 		}
+		logger.v("AccountsCheckName", `Request to check for username availability processed; username '${name}' is available`);
 		responseSetting.setResponseFullJSON(response, responseJSON);
 		return;
 	});

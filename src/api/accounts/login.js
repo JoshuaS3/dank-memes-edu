@@ -10,6 +10,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 
 	httpBodyParser(request, responseJSON, function(body) {
+		logger.v("AccountsLogin", "Processing request to login...");
 		let displayName = body.displayName || null;
 		let password = body.password || null;
 		let verToken = body.verToken || null;
@@ -17,6 +18,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 403;
 			responseJSON.message = "Auth token `verToken` is required";
+			logger.v("AccountsLogin", "Request to login denied for not supplying proper authentication");
 			response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
@@ -25,6 +27,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `password` is required";
+			logger.v("AccountsLogin", "Request to login denied for not supplying a password");
 			response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
@@ -33,6 +36,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `displayName` is required";
+			logger.v("AccountsLogin", "Request to login denied for not supplying a username");
 			response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
@@ -43,6 +47,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					responseJSON.success = false;
 					responseJSON.status = 403;
 					responseJSON.message = "Auth token `verToken` has expired";
+					logger.v("AccountsLogin", "Request to login denied for not supplying proper authentication");
 					response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 					responseSetting.setResponseFullJSON(response, responseJSON);
 					return;
@@ -50,6 +55,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 403;
 				responseJSON.message = "Auth token `verToken` is invalid";
+				logger.v("AccountsLogin", "Request to login denied for not supplying proper authentication");
 				response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
@@ -93,13 +99,15 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 									uuid: uuidv4()
 								}
 								let authToken = jwt.sign(verifiedLogin);
+								logger.v("AccountsLogin", "Request to login processed");
 								response.setHeader("Set-Cookie", `authToken=${authToken}; Expires=${Math.floor(Date.now() / 1000) + 2592000}; Max-Age=2592000; Path=/`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 								return;
 							} else {
 								responseJSON.success = false;
 								responseJSON.status = 400;
-								responseJSON.message = "Incorrect password";
+								responseJSON.message = "Incorrect username or password";
+								logger.v("AccountsLogin", "Request to login denied for incorrect credentials");
 								response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 								responseSetting.setResponseFullJSON(response, responseJSON);
 							}
@@ -107,7 +115,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					} else {
 						responseJSON.success = false;
 						responseJSON.status = 400;
-						responseJSON.message = "Account does not exist";
+						responseJSON.message = "Incorrect username or password";
 						response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
 						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
@@ -118,6 +126,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.status = 403;
 				responseJSON.message = "Auth token `verToken` is invalid";
 				response.setHeader("Set-Cookie", `authToken=; expires=Thu, Jan 01 1970 00:00:00 UTC`);
+				logger.v("AccountsLogin", "Request to login denied for not supplying proper authentication");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}

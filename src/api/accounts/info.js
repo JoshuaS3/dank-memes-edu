@@ -1,3 +1,4 @@
+const logger = require("../../logger.js");
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const httpBodyParser = require("../../httpBodyParser.js");
@@ -6,11 +7,13 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
 
 	httpBodyParser(request, responseJSON, function(body) {
+		logger.v("AccountsInfo", "Processing request to get account info...");
 		let id = parseInt(fullHeaders.id) || body.id;
 		if (!id) {
 			responseJSON.success = false;
 			responseJSON.status = 400;
 			responseJSON.message = "Parameter `id` is required";
+			logger.v("AccountsInfo", "Request to get account info returned false for not supplying a UID");
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		}
@@ -29,6 +32,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "User is nonexistent";
+				logger.v("AccountsInfo", "Request to get account info returned false for the user does not exist");
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -36,6 +40,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = true;
 			responseJSON.status = 200;
 			responseJSON.data = results[0];
+			logger.v("AccountsInfo", "Request to get account info processed");
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;
 		});

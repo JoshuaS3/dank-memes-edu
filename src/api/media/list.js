@@ -1,6 +1,7 @@
 const responseSetting = require("../../responseSetting.js");
 const mySQLconnection = require("../../mySQLconnection.js");
 const httpBodyParser = require("../../httpBodyParser.js");
+const logger = require("../../logger.js");
 
 module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
@@ -11,6 +12,8 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			count = 100;
 			responseJSON.message = "Response limited to 100 results";
 		}
+
+		logger.v("MediaList", `Request made to list ${count} images`);
 
 		let query = "SELECT id FROM joshuas3.images ORDER BY dateAdded DESC LIMIT ?"
 		mySQLconnection.query(query, [count], function(err, results) {

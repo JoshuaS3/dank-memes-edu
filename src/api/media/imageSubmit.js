@@ -9,6 +9,7 @@ const mime = ['image/jpeg', 'image/png', 'image/gif']
 
 module.exports = function(request, fullHeaders, response, truncatedUrl) {
 	let responseJSON = {};
+	logger.v("MediaSubmit", `Request made to submit an image`);
 	let form = new formidable.IncomingForm();
 	form.hash = 'md5';
 	form.parse(request, function (err, fields, files) {
@@ -23,10 +24,11 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 
 		for (var file in files) {
 			let tempPath = files[file].path;
-			if (files[file].size > 20971520) { // no files > 20 MiB
+			if (files[file].size > 2e7) { // no files > 20 MB
 				responseJSON.success = false;
 				responseJSON.status = 400;
-				responseJSON.message = "The submitted file's size is too large (20MiB maximum = 20,971,520 bytes)";
+				responseJSON.message = "The submitted file's size is too large (20MB maximum = 20,000,000 bytes)";
+				logger.v("MediaSubmit", `Request made to submit an image denied for being greater than 20MB`);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -34,6 +36,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				responseJSON.success = false;
 				responseJSON.status = 400;
 				responseJSON.message = "The submitted file's type is not supported";
+				logger.v("MediaSubmit", `Request made to submit an image denied for not being a supported file type`);
 				responseSetting.setResponseFullJSON(response, responseJSON);
 				return;
 			}
@@ -43,6 +46,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					responseJSON.success = false;
 					responseJSON.status = 500;
 					responseJSON.message = err.toString();
+					logger.e("MediaSubmit", `Request made to submit an image failed for a read error`, err);
 					responseSetting.setResponseFullJSON(response, responseJSON);
 					return;
 				}
@@ -76,6 +80,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 							responseJSON.data = {
 								"id": files[file].hash
 							}
+							logger.v("MediaSubmit", `Image submitted with ID ${files[file].hash}, responding...`);
 							responseSetting.setResponseFullJSON(response, responseJSON);
 							return;
 						});
@@ -85,6 +90,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 						responseJSON.data = {
 							"id": files[file].hash
 						}
+						logger.v("MediaSubmit", `Image submitted with ID ${files[file].hash}, responding...`);
 						responseSetting.setResponseFullJSON(response, responseJSON);
 						return;
 					}
