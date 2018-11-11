@@ -181,6 +181,12 @@
 				"aliases": ["/api/posts/list"],
 				"logicHandler": "./src/api/posts/list.js",
 				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/logging/get",
+				"aliases": ["/api/logging/get"],
+				"logicHandler": "./src/api/logging/get.js",
+				"acceptedMethod": "GET"
 			}
 		]
 	}
