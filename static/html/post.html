@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<@HEADER>
+	</head>
+	<body>
+		<@TOPBAR>
+		<@ALERTS>
+		<div class="container mb-4">
+			<div class="row justify-content-center">
+				<div class="col-lg-6 shadow-lg p-3 mb-2 mt-4">
+					<div class="form-group">
+						<script type="text/javascript">
+$(document).ready(function(){
+	checkLoginState(function(loginState) {
+		if (!loginState.success) {
+			location = "/login";
+		}
+	});
+});
+function submitImage() {
+	$.ajax({
+		url: '/api/media/image',
+		type: 'POST',
+		data: new FormData($("#image-submit")[0]),
+		cache: false,
+		contentType: false,
+		processData: false,
+		success: function(returnData) {
+			$("#post-submit").prepend('<input type="hidden" name="imageid" value="' + returnData.data.id + '">');
+			$("#image-upload").attr('src', '/image/' + returnData.data.id);
+		},
+		error: function(returnData) {
+		}
+	});
+}
+function submitPost() {
+	$.post("/api/posts/post", {
+			title: $("input[name=title]")[0].value,
+			imageid: $("input[name=imageid]")[0].value
+		}, function(result) {
+			if (result.success) {
+				location = "/";
+			} else {
+
+			}
+		}
+	);
+}
+						</script>
+						<div id="post-submit" class="form-group">
+							<h1>New Post</h1>
+							<form id="image-submit" action="/api/media/image" method="post" enctype="multipart/form-data">
+								<input type="file" onchange="submitImage()" class="form-control-file w-100" style="display:none" id="exampleFormControlFile1" name="filetoupload" accept="image/png, image/jpeg, image/gif">
+							</form>
+							<input type="button" class="btn btn-outline-dark w-100" value="Browse" onclick="document.getElementById('exampleFormControlFile1').click();" />
+							<input type="text" class="form-control w-100 mt-2" name="title" placeholder="Post Title">
+							<img id="image-upload" class="w-100 mt-2 mb-2" />
+							<input type="button" onclick="submitPost()" value="Create New Post" class="btn btn-success w-100 pt-3 pb-3 form-control-submit"></input>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
