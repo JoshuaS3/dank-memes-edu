@@ -80,18 +80,18 @@ serverStructure.forEach(function (serverData) {
 	function serverFunction(request, response) {
 		let responseSent = false;
 		let truncatedUrl = request.url.split("?")[0].replace(/\/$/, "");
-		let hashedUrl = request.method.toUpperCase() + " " + truncatedUrl;
-		logger.d("Request", `Request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
-		logger.v("Request", `Request made by ${request.connection.remoteAddress} at ${hashedUrl} headers: ${JSON.stringify(request.headers)}`);
+		let url = request.method.toUpperCase() + " " + truncatedUrl;
+		logger.d("Request", `Request made by ${request.connection.remoteAddress} at ${url}`);
+		logger.v("Request", `Request made by ${request.connection.remoteAddress} at ${url} headers: ${JSON.stringify(request.headers)}`);
 		let fullHeaders = Object.assign(urlLib.parse(request.url, true).query, request.headers);
-		hashedUrl = md5(hashedUrl);
+		hashedUrl = md5(url);
 
 		// Logic for API endpoints
 		if (serverData.apiEndpoints[hashedUrl]) {
 			let apiEndpointData = serverData.apiEndpoints[hashedUrl];
 			apiEndpointData.logicHandler(request, fullHeaders, response, truncatedUrl);
 			responseSent = true;
-			logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
+			logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${url}`);
 			return;
 		} else {
 			serverData.apiEndpoints.forEach(function (apiEndpointData) {
@@ -104,7 +104,7 @@ serverStructure.forEach(function (serverData) {
 
 						apiEndpointData.logicHandler(request, fullHeaders, response, truncatedUrl);
 						responseSent = true;
-						logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
+						logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${url}`);
 						return;
 
 					} else {
@@ -164,7 +164,7 @@ serverStructure.forEach(function (serverData) {
 					}
 				}
 				responseSetting.setResponseHeader(response, 200, staticPageData.mime);
-				logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
+				logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${url}`);
 				if (staticPageData.binary) {
 					response.end(staticPageResponseContent, 'binary');
 				} else {
@@ -204,7 +204,7 @@ serverStructure.forEach(function (serverData) {
 							}
 						}
 						responseSetting.setResponseHeader(response, 200, staticPageData.mime);
-						logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
+						logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${url}`);
 						if (staticPageData.binary) {
 							response.end(staticPageResponseContent, 'binary');
 						} else {

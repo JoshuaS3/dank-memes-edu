@@ -85,50 +85,52 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				for (let fileNum in files) {
 					if (done) break;
 					let file = files[fileNum];
-					if (file.time.toUTCString() == new Date(filedate).toUTCString()) {
-						fs.readFile(path.join(logger.logPath, file.name), function(err, buffer) {
-							if (err) {
-								responseJSON.success = false;
-								responseJSON.status = 500;
-								responseJSON.message = err.toString();
-								logger.e("LoggingGet", "Request to fetch logs denied due to a file reading error", err);
-								responseSetting.setResponseFullJSON(response, responseJSON);
-								return;
-							}
-							let filestat = fs.statSync(logger.logPath + "/" + file.name);
-							let regex = new RegExp(`.*\\|\\ (?:${verbosity})\\ \\|\\ (?:${tag})\\ \\|\\ .*?(?:[\\n].*?)*(?={EOT})`, "g");
-							let fullLog = buffer.toString();
-							let m;
-							let fullResponse = [];
+					if (file.time) {
+						if (file.time.toUTCString() == new Date(filedate).toUTCString()) {
+							fs.readFile(path.join(logger.logPath, file.name), function(err, buffer) {
+								if (err) {
+									responseJSON.success = false;
+									responseJSON.status = 500;
+									responseJSON.message = err.toString();
+									logger.e("LoggingGet", "Request to fetch logs denied due to a file reading error", err);
+									responseSetting.setResponseFullJSON(response, responseJSON);
+									return;
+								}
+								let filestat = fs.statSync(logger.logPath + "/" + file.name);
+								let regex = new RegExp(`.*\\|\\ (?:${verbosity})\\ \\|\\ (?:${tag})\\ \\|\\ .*?(?:[\\n].*?)*(?={EOT})`, "g");
+								let fullLog = buffer.toString();
+								let m;
+								let fullResponse = [];
 
-							while ((m = regex.exec(fullLog)) !== null) {
-								if (m.index === regex.lastIndex) {
-									regex.lastIndex++;
+								while ((m = regex.exec(fullLog)) !== null) {
+									if (m.index === regex.lastIndex) {
+										regex.lastIndex++;
+									}
+
+									m.forEach(function (match) {
+										if (match.length > 0) {
+											fullResponse.push(match);
+										}
+									});
 								}
 
-								m.forEach(function (match) {
-									if (match.length > 0) {
-										fullResponse.push(match);
-									}
-								});
-							}
+								let filteredResponse = fullResponse.slice(start, start + count);
 
-							let filteredResponse = fullResponse.slice(start, start + count);
-
-							responseJSON.success = true;
-							responseJSON.status = 200;
-							responseJSON.data = {
-								filename: file.name,
-								filedate: filestat.birthtime,
-								filesize: filestat.size,
-								count: filteredResponse.length,
-								list: filteredResponse
-							}
-							logger.v("LoggingGet", "Request to fetch logs processed");
-							responseSetting.setResponseFullJSON(response, responseJSON);
-							done = true;
-							return;
-						});
+								responseJSON.success = true;
+								responseJSON.status = 200;
+								responseJSON.data = {
+									filename: file.name,
+									filedate: filestat.birthtime,
+									filesize: filestat.size,
+									count: filteredResponse.length,
+									list: filteredResponse
+								}
+								logger.v("LoggingGet", "Request to fetch logs processed");
+								responseSetting.setResponseFullJSON(response, responseJSON);
+								done = true;
+								return;
+							});
+						}
 					}
 				}
 				responseJSON.success = false;
