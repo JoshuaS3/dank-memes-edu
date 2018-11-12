@@ -85,7 +85,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 				for (let fileNum in files) {
 					if (done) break;
 					let file = files[fileNum];
-					if (file.time) {
+					if (file.time !== null) {
 						if (file.time.toUTCString() == new Date(filedate).toUTCString()) {
 							fs.readFile(path.join(logger.logPath, file.name), function(err, buffer) {
 								if (err) {
