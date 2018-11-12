@@ -36,12 +36,12 @@ function submit() {
 	let start=$("input[name=start]")[0].value || 0;
 	let count=$("input[name=count]")[0].value || 200;
 	let verbosity=$("select[name=verbosity]")[0].value;
-	let filedate=$("#log-files")[0].value;
+	let file=$("#log-files")[0].value;
 	let matched = false;
-	files.forEach(function (file) {
+	files.forEach(function (itFile) {
 		if (matched) return;
-		if (filedate == new Date(file.time).toString()) {
-			filedate = file.time;
+		if (file == new Date(itFile.time).toString()) {
+			file = itFile.name;
 			matched = true;
 		}
 	});
@@ -49,7 +49,7 @@ function submit() {
 		return;
 	}
 
-	$.getJSON(`/api/logging/get?tag=${tag}&start=${start}&count=${count}&verbosity=${verbosity}&filedate=${filedate}`, {}, function (result) {
+	$.getJSON(`/api/logging/get?tag=${tag}&start=${start}&count=${count}&verbosity=${verbosity}&file=${file}`, {}, function (result) {
 		if (!result.success) {
 			$("#output")[0].value = JSON.stringify(result);
 		} else {
@@ -58,7 +58,7 @@ function submit() {
 				output += result.data.list[listing] + "\n";
 			}
 			$("label[for=output-file-name]").html("Log name: " + result.data.filename);
-			$("label[for=output-file-date]").html("Log date: " + new Date(result.data.filedate).toString());
+			$("label[for=output-file-date]").html("Log date: " + new Date(result.data.file).toString());
 			let filesizebytes = result.data.filesize;
 			let filesizestring = filesizebytes + "B";
 			if ((filesizebytes / 1000) > 1) {
