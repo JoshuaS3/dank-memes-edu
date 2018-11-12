@@ -58,7 +58,7 @@ function submit() {
 				output += result.data.list[listing] + "\n";
 			}
 			$("label[for=output-file-name]").html("Log name: " + result.data.filename);
-			$("label[for=output-file-date]").html("Log date: " + new Date(result.data.file).toString());
+			$("label[for=output-file-date]").html("Log date: " + new Date(result.data.filedate).toString());
 			let filesizebytes = result.data.filesize;
 			let filesizestring = filesizebytes + "B";
 			if ((filesizebytes / 1000) > 1) {
