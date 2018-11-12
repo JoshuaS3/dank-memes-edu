@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<@HEADER>
+	</head>
+	<body>
+		<@TOPBAR>
+		<@ALERTS>
+		<div class="container mb-4">
+			<div class="row justify-content-center">
+				<script type="text/javascript">
+var files;
+$(document).ready(function () {
+	checkLoginState(function(loginState) {
+		if (!loginState.success) {
+			location = "/login";
+		} else {
+			if (!loginState.data.superuser) {
+				location = "/login";
+			}
+		}
+	});
+	$.getJSON("/api/logging/list", {}, function (result) {
+		if (result.success) {
+			files = result.data;
+			files.forEach(function (file) {
+				if (file.time) {
+					$("#log-files").append("<option>" + new Date(file.time).toString() + "</option>");
+				}
+			});
+		}
+	});
+});
+function submit() {
+	let tag=$("input[name=tag]")[0].value || ".*";
+	let start=$("input[name=start]")[0].value || 0;
+	let count=$("input[name=count]")[0].value || 200;
+	let verbosity=$("select[name=verbosity]")[0].value;
+	let filedate=$("#log-files")[0].value;
+	let matched = false;
+	files.forEach(function (file) {
+		if (matched) return;
+		if (filedate == new Date(file.time).toString()) {
+			filedate = file.time;
+			matched = true;
+		}
+	});
+	if (!matched) {
+		return;
+	}
+
+	$.getJSON(`/api/logging/get?tag=${tag}&start=${start}&count=${count}&verbosity=${verbosity}&filedate=${filedate}`, {}, function (result) {
+		if (!result.success) {
+			$("#output")[0].value = JSON.stringify(result);
+		} else {
+			let output = "";
+			for (let listing in result.data.list) {
+				output += result.data.list[listing] + "\n";
+			}
+			$("label[for=output-file-name]").html("Log name: " + result.data.filename);
+			$("label[for=output-file-date]").html("Log date: " + new Date(result.data.filedate).toString());
+			let filesizebytes = result.data.filesize;
+			let filesizestring = filesizebytes + "B";
+			if ((filesizebytes / 1000) > 1) {
+				filesizestring = (filesizebytes / 1000) + "KB";
+			}
+			if ((filesizebytes / 1000 / 1000) > 1) {
+				filesizestring = (filesizebytes / 1000 / 1000) + "MB";
+			}
+			if ((filesizebytes / 1000 / 1000 / 1000) > 1) {
+				filesizestring = (filesizebytes / 1000 / 1000 / 1000) + "GB";
+			}
+			$("label[for=output-file-size]").html("Log size: " + filesizestring);
+			$("label[for=output-results]").html("Results: " + result.data.count);
+			$("label[for=output-verbosity]").html("Verbosity: " + verbosity);
+			$("label[for=output-tag]").html("Tag: " + tag);
+			$("label[for=output-start]").html("Start: " + start);
+			$("label[for=output-count]").html("Count: " + count);
+			$("#output")[0].value = output;
+		}
+	});
+};
+				</script>
+				<div class="col-lg-12 shadow-lg p-3 mb-4 mt-4">
+					<h1 class="mb-4">Site Logs (superuser only)</h1>
+					<div class="form-group row">
+						<div class="form-group col-md-12">
+							<label class="ml-2">Log file</label>
+							<select class="form-control" id="log-files">
+							</select>
+						</div>
+					</div>
+					<hr/>
+					<div class="form-group row">
+						<div class="form-group col-md-3">
+							<label class="ml-2">Verbosity</label>
+							<select class="form-control" name="verbosity">
+								<option selected>INFO</option>
+								<option>DEBUG</option>
+								<option>VERBOSE</option>
+								<option>VERY_VERBOSE</option>
+							</select>
+						</div>
+						<div class="form-group col-md-3">
+							<label class="ml-2">Tag</label>
+							<input type="text" class="form-control" name="tag" placeholder=".*">
+						</div>
+						<div class="form-group col-md-3">
+							<label class="ml-2">Start</label>
+							<input type="number" class="form-control" name="start" min="0">
+						</div>
+						<div class="form-group col-md-3">
+							<label class="ml-2">Count</label>
+							<input type="number" class="form-control" name="count" min="20" max="10000">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="form-group col-lg-12">
+							<button type="submit" onclick="submit()" class="w-100 btn btn-success form-control-submit">Refresh</button>
+						</div>
+					</div>
+					<hr/>
+					<div class="form-group row mb-0">
+						<div class="form-group col mb-0">
+							<label for="output-file-name" class="ml-2 mb-0">Log name: </label>
+						</div>
+						<div class="form-group col mb-0">
+							<label for="output-file-date" class="ml-2 mb-0">Log date: </label>
+						</div>
+						<div class="form-group col mb-0">
+							<label for="output-file-size" class="ml-2 mb-0">Log size: </label>
+						</div>
+					</div>
+					<hr/>
+					<div class="form-group row mb-0">
+						<div class="form-group col mb-0">
+							<label for="output-results" class="ml-2">Results: </label>
+						</div>
+						<div class="form-group col mb-0">
+							<label for="output-verbosity" class="ml-2">Verbosity: </label>
+						</div>
+						<div class="form-group col mb-0">
+							<label for="output-tag" class="ml-2">Tag: </label>
+						</div>
+						<div class="form-group col mb-0">
+							<label for="output-start" class="ml-2">Start: </label>
+						</div>
+						<div class="form-group col mb-0">
+							<label for="output-count" class="ml-2">Count: </label>
+						</div>
+					</div>
+					<textarea class="form-control" rows="20" id="output" placeholder="[Output]" readonly></textarea>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

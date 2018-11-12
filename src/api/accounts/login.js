@@ -74,7 +74,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 					if (results[0]) {
 						let passwordSalt = results[0].passwordSalt;
 						let hashedPassword = md5((password + passwordSalt).toString('hex'));
-						let query = "SELECT id FROM `joshuas3`.`accounts` WHERE displayName = ? AND passwordHash = ? ";
+						let query = "SELECT id, superuser FROM `joshuas3`.`accounts` WHERE displayName = ? AND passwordHash = ? ";
 						mySQLconnection.query(query, [displayName, hashedPassword], function(err, results) {
 							if (err) {
 								responseJSON.success = false;
@@ -95,6 +95,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 								let verifiedLogin = {
 									userId: results[0].id,
 									displayName: displayName,
+									superuser: results[0].superuser,
 									exp: Math.floor(Date.now() / 1000) + 2592000,
 									uuid: uuidv4()
 								}

@@ -91,6 +91,7 @@ serverStructure.forEach(function (serverData) {
 			let apiEndpointData = serverData.apiEndpoints[hashedUrl];
 			apiEndpointData.logicHandler(request, fullHeaders, response, truncatedUrl);
 			responseSent = true;
+			logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
 			return;
 		} else {
 			serverData.apiEndpoints.forEach(function (apiEndpointData) {
@@ -103,6 +104,7 @@ serverStructure.forEach(function (serverData) {
 
 						apiEndpointData.logicHandler(request, fullHeaders, response, truncatedUrl);
 						responseSent = true;
+						logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
 						return;
 
 					} else {
@@ -162,6 +164,7 @@ serverStructure.forEach(function (serverData) {
 					}
 				}
 				responseSetting.setResponseHeader(response, 200, staticPageData.mime);
+				logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
 				if (staticPageData.binary) {
 					response.end(staticPageResponseContent, 'binary');
 				} else {
@@ -201,6 +204,7 @@ serverStructure.forEach(function (serverData) {
 							}
 						}
 						responseSetting.setResponseHeader(response, 200, staticPageData.mime);
+						logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl}`);
 						if (staticPageData.binary) {
 							response.end(staticPageResponseContent, 'binary');
 						} else {
@@ -216,6 +220,7 @@ serverStructure.forEach(function (serverData) {
 
 
 		if (!responseSent) { // none of the iterated pages matches the request URL, 404 not found
+			logger.d("Response", `Responded to request made by ${request.connection.remoteAddress} at ${hashedUrl} with error 404`);
 			responseSetting.setResponseFullHTML(response, 404);
 			return response.end();
 		} else { // error handling; it is said that a response can be sent but it hasn't already

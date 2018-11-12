@@ -30,10 +30,7 @@ module.exports = function(request, fullHeaders, response, truncatedUrl) {
 			responseJSON.success = true;
 			responseJSON.status = 200;
 			responseJSON.message = "Signed in";
-			responseJSON.data = {
-				userId: decoded.userId,
-				displayName: decoded.displayName
-			}
+			responseJSON.data = decoded;
 			logger.v("AccountsGetState", "Request to check for login status processed; logged in");
 			responseSetting.setResponseFullJSON(response, responseJSON);
 			return;

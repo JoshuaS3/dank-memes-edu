@@ -20,7 +20,8 @@ function formatDate(newDate) {
 	return formatted;
 }
 
-let outputFile = path.join(__dirname, path.join("../logs", (formatDate(new Date()).replace(/[\\\/:.]/g, '-').replace(" ", "---") + ".log")));
+let logPath = path.join(__dirname, "../logs");
+let outputFile = path.join(logPath, formatDate(new Date()).replace(/[\\\/:.]/g, '-').replace(" ", "---") + ".log");
 
 let array = [];
 function update() {
@@ -90,5 +91,6 @@ module.exports = {
 	w: warn,
 	e: error,
 	write: write,
-	outputFile: outputFile
+	outputFile: outputFile,
+	logPath: logPath
 }

@@ -60,6 +60,16 @@
 				}
 			},
 			{
+				"webAddress": "/logs",
+				"localResponseFile": "static/html/logs.html",
+				"mime": "text/html",
+				"fragments": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
+			},
+			{
 				"webAddress": "/js/loginState.js",
 				"localResponseFile": "static/js/loginState.js",
 				"mime": "text/javascript"
@@ -186,6 +196,12 @@
 				"webAddress": "/api/v1/logging/get",
 				"aliases": ["/api/logging/get"],
 				"logicHandler": "./src/api/logging/get.js",
+				"acceptedMethod": "GET"
+			},
+			{
+				"webAddress": "/api/v1/logging/list",
+				"aliases": ["/api/logging/list"],
+				"logicHandler": "./src/api/logging/list.js",
 				"acceptedMethod": "GET"
 			}
 		]
