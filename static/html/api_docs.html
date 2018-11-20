@@ -6,14 +6,14 @@
 	<body>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-lg-2 p-4 bg-light position-fixed" style="height:100%; max-height:100%; overflow-y:scroll">
+				<div class="col-2 p-4 bg-light position-fixed" style="height:100%; max-height:100%; overflow-y:scroll; overflow-x: scroll">
 					<h4>dankmemes.edu API</h4>
 					<a href="/">Home</a>
 					<a href="/serverStructure.json">serverStructure.json</a>
 					<hr/>
 					<ul id="table-of-contents" class="list-unstyled"></ul>
 				</div>
-				<div class="col offset-lg-2" id="docs"></div>
+				<div class="col-lg-10 offset-2" id="docs"></div>
 			</div>
 		</div>
 		<script type="text/javascript">
@@ -170,7 +170,7 @@ $(document).ready(function(){
 				}
 
 
-				let final = `${openTag}<div class="col-6 bg-white py-4 border-bottom">${header}${urlTag}${descriptionTag}${paramsTable}<hr/>${exampleBody}${exampleHeaders}</div><div class="col bg-dark text-light pt-4 pb-4">${exampleRequest}${exampleResponses}${exampleErrors}</div>`
+				let final = `${openTag}<div class="col-6 bg-white py-4 border-bottom">${header}${urlTag}${descriptionTag}${paramsTable}<hr/>${exampleBody}${exampleHeaders}</div><div class="col-6 bg-dark text-light pt-4 pb-4">${exampleRequest}${exampleResponses}${exampleErrors}</div>`
 
 				$("#docs").append(final);
 			});
