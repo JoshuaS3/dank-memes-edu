@@ -162,7 +162,7 @@ $(document).ready(function(){
 
 						errors.forEach(function (error) {
 							if (error.error == errorName) {
-								exampleErrors += `<tr><td>${error.code}</td><td>${error.error}</td><td>${error.description}</td></tr>`;
+								exampleErrors += `<tr><td>${error.status}</td><td>${error.error}</td><td>${error.description}</td></tr>`;
 							}
 						});
 					});
