@@ -9,41 +9,8 @@
 		<div class="container mb-4 mt-4">
 			<div class="row justify-content-center">
 				<div class="col-lg-8" id="list">
+					<script type="text/javascript" src="/js/timeSince.js"></script>
 					<script type="text/javascript">
-function timeSince(date) {
-	let seconds = Math.floor((new Date() - date) / 1000);
-	let interval;
-	let x;
-
-	function check(string) {
-		if (interval > 1) {
-			return interval + " " + string + "s";
-		} else if (interval > 0) {
-			return interval + " " + string;
-		}
-		return false;
-	}
-
-	interval = Math.floor(seconds / 31536000);
-	x = check("year"); if (x) return x;
-
-	interval = Math.floor(seconds / 2592000);
-	x = check("month"); if (x) return x;
-
-	interval = Math.floor(seconds / 86400);
-	x = check("day"); if (x) return x;
-
-	interval = Math.floor(seconds / 3600);
-	x = check("hour"); if (x) return x;
-
-	interval = Math.floor(seconds / 60);
-	x = check("minute"); if (x) return x;
-
-	return seconds + " seconds"
-}
-
-let oneday = 24*60*60*1000;
-
 $(document).ready(function(){
 	checkLoginState(function(loginState) {
 		if (loginState.success) {

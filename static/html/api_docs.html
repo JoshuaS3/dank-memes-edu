@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<@HEADER>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-2 p-4 bg-light position-fixed" style="height:100%; max-height:100%; overflow-y:scroll; overflow-x: scroll">
+					<h4>dankmemes.edu API</h4>
+					<a href="/">Home</a>
+					<a href="/serverStructure.json">serverStructure.json</a>
+					<hr/>
+					<ul id="table-of-contents" class="list-unstyled"></ul>
+				</div>
+				<div class="col-lg-10 offset-2" id="docs"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+$(document).ready(function(){
+	$.getJSON('/serverStructure.json', null, function (serverStructure) {
+		serverStructure = serverStructure[0];
+		let sectionsData = serverStructure.apiDocs.sections;
+		let errors = serverStructure.apiDocs.errors;
+		let sections = {};
+		serverStructure.apiEndpoints.forEach(function (apiEndpointData) {
+			let thisDocs = apiEndpointData.docs;
+			if (thisDocs) {
+				if (sections[thisDocs.section] == null) {
+					sections[thisDocs.section] = [];
+				}
+				sections[thisDocs.section].push(apiEndpointData);
+			}
+		});
+
+		serverStructure.apiDocs.independent.forEach(function (independent) {
+			let image = ``;
+			if (independent.imageURL) {
+				image = `<img class="mw-100" src="${independent.imageURL}" />`;
+			}
+
+			let description = ``;
+			if (independent.contentHTML) {
+				description = `<p class="my-4">${independent.contentHTML}</p>`;
+			}
+
+			$("#docs").append(`<div id="${independent.name}" class="row"><div class="col-6 border-bottom"><h1 class="my-4">${independent.name}</h1>${image}${description}</div><div class="col-6 bg-dark"></div></div>`);
+
+			$("#table-of-contents").append(`<span><a href="#${independent.name}" class="text-dark">${independent.name}</a></span><ul class="list-unstyled ml-4">`);
+		});
+
+
+		for (const [sectionName, contents] of Object.entries(sections)) {
+
+			let sectionHeaderCreated = false;
+			sectionsData.forEach(function (sectionData) {
+				if (sectionData.name == sectionName) {
+
+					let image = ``;
+					if (sectionData.imageURL) {
+						image = `<img class="mw-100" src="${sectionData.imageURL}" />`;
+					}
+
+					let description = ``;
+					if (sectionData.description) {
+						description = `<p class="lead my-4">${sectionData.description}</p>`;
+					}
+
+					$("#docs").append(`<div id="${sectionName}" class="row"><div class="col-6 border-bottom"><h2 class="my-4">${sectionName}</h2>${image}${description}</div><div class="col-6 bg-dark"></div></div>`);
+					sectionHeaderCreated = true;
+				}
+			});
+			if (!sectionHeaderCreated) {
+				$("#docs").append(`<div class="row"><div class="col-6 border-bottom"><h1 class="my-4">${sectionName}</h1></div><div class="col-6 bg-dark"></div></div>`);
+			}
+
+			contents.forEach(function (apiEndpointData) {
+
+				let thisUrl = apiEndpointData.webAddress;
+				let thisDocs = apiEndpointData.docs;
+
+				let openTag = `<div id="${thisDocs.method + "/" + thisUrl}" class="row">`
+
+
+				let header = "";
+				if (thisDocs.method == "GET") {
+					header = `<h3 class="mb-4"><span class="text-success"><small class="font-weight-bold">GET</small></span><span> ${thisDocs.title}</span></h3>`
+				} else if (thisDocs.method == "POST") {
+					header = `<h3 class="mb-4"><span class="text-warning"><small class="font-weight-bold">POST</small></span><span> ${thisDocs.title}</span></h3>`
+				} else if (thisDocs.method == "DELETE") {
+					header = `<h3 class="mb-4"><span class="text-danger"><small class="font-weight-bold">DEL</small></span><span> ${thisDocs.title}</span></h3>`
+				} else if (thisDocs.method == "PUT") {
+					header = `<h3 class="mb-4"><span class="text-primary"><small class="font-weight-bold">PUT</small></span><span> ${thisDocs.title}</span></h3>`
+				} else {
+					header = `<h3 class="mb-4"><span class="text-secondary"><small class="font-weight-bold">${thisDocs.method}</small></span><span> ${thisDocs.title}</span></h3>`
+				}
+
+
+				let urlTag = `<input type="text" class="form-control text-monospace mb-4" readonly placeholder="http://www.joshuas3.com${thisUrl}"></input>`
+
+
+				let descriptionTag = `<p>${thisDocs.description}</p>`
+
+
+				let paramsTable = "";
+				if (thisDocs.params) {
+					paramsTable += `<h5 class="mb-2">Parameters</h5><table class="table table-bordered"><thead><tr><th>Key</th><th>Data Type</th><th>Required</th><th>Description</th></tr></thead><tbody>`;
+					thisDocs.params.forEach(function (parameter) {
+						paramsTable += `<tr><td>${parameter.name}</td><td>${parameter.data_type}</td><td>${parameter.required_status}</td><td>${parameter.description}</td></tr>`;
+					});
+					paramsTable += `</tbody></table>`;
+				}
+
+				let exampleBody = "";
+				if (thisDocs.examples.body) {
+					exampleBody += `<h6 class="mb-2 mt-4 lead">Body</h6><div class="container-fluid mb-4">`;
+					for (const [variable, value] of Object.entries(thisDocs.examples.body)) {
+						exampleBody += `<div class="row mb-4"><div class="col-3 font-weight-bold"><span>${variable}</span></div><div class="col-9"><span>${value}</span></div></div>`;
+					}
+					exampleBody += `</div>`;
+				}
+
+				let exampleHeaders = "";
+				if (thisDocs.examples.headers) {
+					exampleHeaders += `<h6 class="mb-2 mt-4 lead">Headers</h6><div class="container-fluid mb-4">`;
+					for (const [variable, value] of Object.entries(thisDocs.examples.headers)) {
+						exampleHeaders += `<div class="row mb-4"><div class="col-3 font-weight-bold"><span>${variable}</span></div><div class="col-9"><span>${value}</span></div></div>`;
+					}
+					exampleHeaders += `</div>`;
+				}
+
+
+				let exampleRequest = "";
+				if (thisDocs.examples.request) {
+					exampleRequest += `<div class="mb-4"><div class="heading"><span>Example Request</span></div><div class="bg-secondary"><pre class="code-snippet text-light p-2 m-0">`;
+					thisDocs.examples.request.forEach(function (line) {
+						exampleRequest += `<code>${line}</code>`;
+						exampleRequest += '\n';
+					});
+					exampleRequest += "</pre></div></div>";
+				}
+
+
+				let exampleResponses = "";
+				if (thisDocs.examples.responses) {
+					exampleResponses += `<div class="mb-4"><div class="heading"><span>Example Responses</span></div><div class="container-fluid">`;
+					thisDocs.examples.responses.forEach(function (response) {
+						exampleResponses += `<div class="row bg-secondary border-bottom"><span class="text-light p-2 m-0">${response.status}</span></div><div class="row bg-secondary mb-4"><pre class="text-light p-2 m-0">`;
+						response.content.forEach(function (line) {
+							exampleResponses += `<code>${line}</code>`;
+							exampleResponses += '\n';
+						});
+						exampleResponses += `</div>`;
+					});
+					exampleResponses += `</div></div>`;
+				}
+
+				let exampleErrors = "";
+				if (thisDocs.examples.errors) {
+					exampleErrors += `<div class="mb-4"><div class="heading"><span>Error Responses</span></div><table class="table table-dark table-striped table-borderless"><thead><tr><th>Code</th><th>Error</th><th>Error Description</th></tr></thead><tbody>`;
+					thisDocs.examples.errors.forEach(function (errorName) {
+
+						errors.forEach(function (error) {
+							if (error.error == errorName) {
+								exampleErrors += `<tr><td>${error.status}</td><td>${error.error}</td><td>${error.description}</td></tr>`;
+							}
+						});
+					});
+					exampleErrors += `</tbody></table></div>`;
+				}
+
+
+				let final = `${openTag}<div class="col-6 bg-white py-4 border-bottom">${header}${urlTag}${descriptionTag}${paramsTable}<hr/>${exampleBody}${exampleHeaders}</div><div class="col-6 bg-dark text-light pt-4 pb-4">${exampleRequest}${exampleResponses}${exampleErrors}</div>`
+
+				$("#docs").append(final);
+			});
+		}
+		for (const [sectionName, endpoints] of Object.entries(sections)) {
+			let openTag = `<span><a href="#${sectionName}" class="text-dark">${sectionName}</a></span><ul class="list-unstyled ml-4">`;
+
+			let itemList = "";
+			endpoints.forEach(function (endpoint) {
+				itemList += `<li><a href="#${endpoint.docs.method + "/" + endpoint.webAddress}" class="text-dark">`
+
+				if (endpoint.docs.method == "GET") {
+					itemList += `<span class="text-success"><small><strong>GET</strong></small></span>`
+				} else if (endpoint.docs.method == "POST") {
+					itemList += `<span class="text-warning"><small><strong>POST</strong></small></span>`
+				} else if (endpoint.docs.method == "DELETE") {
+					itemList += `<span class="text-danger"><small><strong>DEL</strong></small></span>`
+				} else if (endpoint.docs.method == "PUT") {
+					itemList += `<span class="text-primary"><small><strong>PUT</strong></small></span>`
+				} else {
+					itemList += `<span class="text-secondary"><small><strong>${endpoint.docs.method}</strong></small></span>`
+				}
+
+				itemList += `<span> ${endpoint.docs.title}</span></a></li>`;
+			});
+
+			let final = `${openTag}${itemList}</ul>`;
+
+			$("#table-of-contents").append(final);
+		}
+	});
+});
+		</script>
+	</body>
+</html>

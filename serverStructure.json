@@ -70,11 +70,113 @@
 				}
 			},
 			{
+				"webAddress": "/api",
+				"localResponseFile": "static/html/api_docs.html",
+				"mime": "text/html",
+				"fragments": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html",
+					"ALERTS": "static/alerts.html"
+				}
+			},
+			{
 				"webAddress": "/js/loginState.js",
 				"localResponseFile": "static/js/loginState.js",
 				"mime": "text/javascript"
+			},
+			{
+				"webAddress": "/js/timeSince.js",
+				"localResponseFile": "static/js/timeSince.js",
+				"mime": "text/javascript"
+			},
+
+			{
+				"webAddress": "/serverStructure.json",
+				"localResponseFile": "serverStructure.json",
+				"mime": "application/json"
 			}
 		],
+		"apiDocs": {
+			"independent": [
+				{
+					"name": "dankmemes.edu API",
+					"imageURL": "/image/ccccb11b990be7d2961d0b0621a3227b",
+					"contentHTML": "<h3>Hello!</h3><p>This is the open web API documentation for dankmemes.edu. Thank you for using this API. Please don't misuse it. Endpoint information can be found on the left side of the screen while examples can be found on the right.</p>"
+				}
+			],
+			"sections": [
+				{
+					"name": "Media",
+					"description": "Handling image uploading, deleting, and editing."
+				},
+				{
+					"name": "Accounts",
+					"description": "Account creation, login, changing settings, and other features."
+				}
+			],
+			"errors": [
+				{
+					"status": 400,
+					"error": "ERR_MISSING_DISPLAYNAME",
+					"description": "displayName is required.",
+					"userfriendly": "A username is required."
+				},
+				{
+					"status": 400,
+					"error": "ERR_MISSING_PASSWORD",
+					"description": "password is required.",
+					"userfriendly": "A password is required."
+				},
+				{
+					"status": 401,
+					"error": "ERR_RECAPTCHA",
+					"description": "g-recaptcha-response is missing or invalid.",
+					"userfriendly": "Filling out the reCAPTCHA is required."
+				},
+				{
+					"status": 401,
+					"error": "ERR_VERTOKEN",
+					"description": "verToken is missing or invalid.",
+					"userfriendly": "An important authentication token is missing. Please try again."
+				},
+				{
+					"status": 409,
+					"error": "ERR_USERNAME_TAKEN",
+					"description": "The requested username has already been taken.",
+					"userfriendly": "The requested username has already been taken."
+				},
+				{
+					"status": 409,
+					"error": "ERR_USERNAME_LONG",
+					"description": "The requested username is too long.",
+					"userfriendly": "The requested username is too long."
+				},
+				{
+					"status": 409,
+					"error": "ERR_USERNAME_SHORT",
+					"description": "The requested username is too short.",
+					"userfriendly": "The requested username is too short."
+				},
+				{
+					"status": 409,
+					"error": "ERR_USERNAME_INVALID",
+					"description": "The requested username contains invalid characters.",
+					"userfriendly": "The requested username contains invalid characters."
+				},
+				{
+					"status": 409,
+					"error": "ERR_INSECURE_PASSWORD",
+					"description": "The input password's strength isn't good enough.",
+					"userfriendly": "The input password's strength isn't good enough."
+				},
+				{
+					"status": 500,
+					"error": "ERR_MYSQL_QUERY",
+					"description": "An internal server error has occurred while attempting a MySQL query.",
+					"userfriendly": "Something went wrong on our end. Please try again later."
+				}
+			]
+		},
 		"apiEndpoints": [
 			{
 				"webAddress": "/api/v1/media/image",
@@ -83,17 +185,64 @@
 				"acceptedMethod": "POST",
 				"docs": {
 					"method": "POST",
-					"params": {
-						"param_name": {
-							"required_status": "optional",
+					"section": "Media",
+					"title": "Upload Image",
+					"description": "Upload an image to the website.",
+					"params": [
+						{
+							"name": "image",
+							"data_type": "binary",
+							"required_status": "required",
+							"description": "The file to upload. Must be a PNG, JPEG, or GIF"
+						},
+						{
+							"name": "title",
 							"data_type": "string",
-							"description": "param description"
+							"required_status": "optional",
+							"description": "The title of the image."
+						},
+						{
+							"name": "description",
+							"data_type": "string",
+							"required_status": "optional",
+							"description": "The description of the image."
 						}
-					},
-					"headers": {
-						"Authorization": "Client ID"
-					},
-					"description": "endpoint description and usage info"
+					],
+					"examples": {
+						"body": {
+							"image": "{{the_more_you_know.gif}}",
+							"title": "The More You Know",
+							"description": "This is a great gif"
+						},
+						"headers": {
+							"Authorization": "Bearer {{authToken}}"
+						},
+						"request": [
+							"curl --request POST \\",
+							"     --url 'http://www.joshuas3.com/api/media/image' \\",
+							"     --header 'Authorization: Bearer {{authToken}}' \\",
+							"     --header 'content-type: multipart/form-data; boundary=----WebKitFormBoundary' \\",
+							"     --form image={{the_more_you_know.gif}} \\",
+							"     --form title='The More You Know' \\",
+							"     --form description='This is a great gif'"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"id\": {{imageHash}}",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_TITLE_LONG", "ERR_DESCRIPTION_LONG", "ERR_FILE_LARGE", "ERR_FILE_TYPE", "ERR_FILE_READING",
+							"ERR_MYSQL_QUERY"]
+					}
 				}
 			},
 			{
@@ -130,13 +279,139 @@
 				"webAddress": "/api/v1/accounts/create",
 				"aliases": ["/api/accounts/create"],
 				"logicHandler": "./src/api/accounts/create.js",
-				"acceptedMethod": "POST"
+				"acceptedMethod": "POST",
+				"docs": {
+					"method": "POST",
+					"section": "Accounts",
+					"title": "Create Account",
+					"description": "Create an account.",
+					"params": [
+						{
+							"name": "verToken",
+							"data_type": "string",
+							"required_status": "required",
+							"description": "Used to authenticate the request's origin."
+						},
+						{
+							"name": "g-recaptcha-response",
+							"data_type": "string",
+							"required_status": "required",
+							"description": "Web form to help prevent bot activity."
+						},
+						{
+							"name": "displayName",
+							"data_type": "string",
+							"required_status": "required",
+							"description": "The account's username."
+						},
+						{
+							"name": "password",
+							"data_type": "string",
+							"required_status": "required",
+							"description": "The account's password."
+						},
+						{
+							"name": "email",
+							"data_type": "string",
+							"required_status": "optional",
+							"description": "The account's attached email address."
+						},
+						{
+							"name": "firstName",
+							"data_type": "string",
+							"required_status": "optional",
+							"description": "The account's attached first name."
+						},
+						{
+							"name": "lastName",
+							"data_type": "string",
+							"required_status": "optional",
+							"description": "The account's attached last name."
+						}
+					],
+					"examples": {
+						"body": {
+							"verToken": "{{verToken}}",
+							"g-recaptcha-response": "{{g-recaptcha-response}}",
+							"displayName": "John_Doe",
+							"password": "<a href='https://xkcd.com/936/' target='_blank'>correct horse battery staple</a>",
+							"email": "john.doe@anonymous.com",
+							"firstName": "John",
+							"lastName": "Doe"
+						},
+						"request": [
+							"curl --request POST \\",
+							"     --url 'http://www.joshuas3.com/api/media/image' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded; boundary=----WebKitFormBoundary' \\",
+							"     --form 'verToken={{verToken}}' \\",
+							"     --form 'g-recaptcha-response={{g-recaptcha-response}}' \\",
+							"     --form 'displayName=John_Doe' \\",
+							"     --form 'password=correct horse battery staple' \\",
+							"     --form 'email=john.doe@anonymous.com' \\",
+							"     --form 'firstName=John' \\",
+							"     --form 'lastName=Doe'"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_MISSING_DISPLAYNAME", "ERR_MISSING_PASSWORD", "ERR_RECAPTCHA", "ERR_VERTOKEN", "ERR_USERNAME_TAKEN", "ERR_USERNAME_LONG",
+							"ERR_USERNAME_SHORT", "ERR_USERNAME_INVALID", "ERR_INSECURE_PASSWORD", "ERR_MYSQL_QUERY"]
+					}
+				}
 			},
 			{
 				"webAddress": "/api/v1/accounts/login",
 				"aliases": ["/api/accounts/login"],
 				"logicHandler": "./src/api/accounts/login.js",
-				"acceptedMethod": "POST"
+				"acceptedMethod": "POST",
+				"docs": {
+					"method": "POST",
+					"section": "Accounts",
+					"title": "Account Login",
+					"description": "Login to a site account.",
+					"params": [
+						{
+							"name": "yeet",
+							"data_type": "string",
+							"required_status": "optional",
+							"description": "param description"
+						}
+					],
+					"examples": {
+						"body": {
+							"Authorization": "Client ID"
+						},
+						"headers": {
+							"Authorization": "Client ID"
+						},
+						"request": [
+							"curl --request POST \\",
+							"     --url 'http://www.joshuas3.com/api/media/image' \\",
+							"     --etc."
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_MISSING_DISPLAYNAME", "ERR_MISSING_PASSWORD", "ERR_RECAPTCHA", "ERR_VERTOKEN", "ERR_USERNAME_TAKEN", "ERR_USERNAME_LONG",
+							"ERR_USERNAME_SHORT", "ERR_USERNAME_INVALID", "ERR_INSECURE_PASSWORD", "ERR_MYSQL_QUERY"]
+					}
+				}
 			},
 			{
 				"webAddress": "/api/v1/accounts/logout",
