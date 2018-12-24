@@ -80,6 +80,15 @@
 				}
 			},
 			{
+				"webAddress": "/blog",
+				"localResponseFile": "static/html/blog/index.html",
+				"mime": "text/html",
+				"fragments": {
+					"HEADER": "static/header.html",
+					"TOPBAR": "static/topbar.html"
+				}
+			},
+			{
 				"webAddress": "/js/loginState.js",
 				"localResponseFile": "static/js/loginState.js",
 				"mime": "text/javascript"
@@ -107,14 +116,27 @@
 			"sections": [
 				{
 					"name": "Media",
+					"imageURL": "/image/4888b58734c261e7c81fcd766d86deff",
 					"description": "Handling image uploading, deleting, and editing."
 				},
 				{
 					"name": "Accounts",
+					"imageURL": "/image/bb6501756351f364f3fed976b3d4b1bd",
 					"description": "Account creation, login, changing settings, and other features."
+				},
+				{
+					"name": "Alerts",
+					"imageURL": "/image/a59b2a40de9818f3e3c1a39e3bf0f0f8",
+					"description": "Administrator controls for the page-top banners."
 				}
 			],
 			"errors": [
+				{
+					"status": 400,
+					"error": "ERR_INVALID_REQUEST",
+					"description": "The request method used is invalid.",
+					"userfriendly": "The request method used is invalid."
+				},
 				{
 					"status": 400,
 					"error": "ERR_MISSING_DISPLAYNAME",
@@ -179,6 +201,38 @@
 		},
 		"apiEndpoints": [
 			{
+				"webAddress": "/api/v1/media/image/{{imageHash}}",
+				"aliases": ["/api/v1/media/image/[0-9A-Fa-f]{32}", "/image/[0-9A-Fa-f]{32}", "/api/media/image/[0-9A-Fa-f]{32}"],
+				"logicHandler": "./src/api/media/imageFetch.js",
+				"acceptedMethod": "GET",
+				"docs": {
+					"method": "GET",
+					"section": "Media",
+					"title": "Fetch Image",
+					"description": "View an image from the website. Also uses the following endpoint URL:</p><p class='text-monospace'>http://www.joshuas3.com/image/{{imageHash}}</p>",
+					"examples": {
+						"request": [
+							"curl --request GET \\",
+							"     --url 'http://www.joshuas3.com/image/ccccb11b990be7d2961d0b0621a3227b'"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{{binary image}}"
+								]
+							},
+							{
+								"status": "404 NOT FOUND",
+								"content": [
+									"{{404 page, this happens when the imageHash doesn't match up with any saved image}}"
+								]
+							}
+						]
+					}
+				}
+			},
+			{
 				"webAddress": "/api/v1/media/image",
 				"aliases": ["/api/media/image"],
 				"logicHandler": "./src/api/media/imageSubmit.js",
@@ -221,7 +275,7 @@
 							"curl --request POST \\",
 							"     --url 'http://www.joshuas3.com/api/media/image' \\",
 							"     --header 'Authorization: Bearer {{authToken}}' \\",
-							"     --header 'content-type: multipart/form-data; boundary=----WebKitFormBoundary' \\",
+							"     --header 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \\",
 							"     --form image={{the_more_you_know.gif}} \\",
 							"     --form title='The More You Know' \\",
 							"     --form description='This is a great gif'"
@@ -246,34 +300,316 @@
 				}
 			},
 			{
-				"webAddress": "/api/v1/media/image",
-				"aliases": ["/image/[0-9A-Fa-f]{32}", "/api/media/image/[0-9A-Fa-f]{32}"],
-				"logicHandler": "./src/api/media/imageFetch.js",
-				"acceptedMethod": "GET"
-			},
-			{
 				"webAddress": "/api/v1/media/list",
 				"aliases": ["/api/media/list"],
 				"logicHandler": "./src/api/media/list.js",
-				"acceptedMethod": "GET"
+				"acceptedMethod": "GET",
+				"docs": {
+					"method": "GET",
+					"section": "Media",
+					"title": "List Images",
+					"description": "Get a sorted list of images uploaded to the website.",
+					"params": [
+						{
+							"name": "count",
+							"data_type": "int",
+							"required_status": "optional",
+							"description": "The number of images to list. Defaults to 20, maxes out at 100."
+						}
+					],
+					"examples": {
+						"body": {
+							"count": "3"
+						},
+						"request": [
+							"curl --request GET \\",
+							"     --url 'http://www.joshuas3.com/api/media/list' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data count=3"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"count\": 3,",
+									"    \"ids\": [",
+									"      \"5a8b62f6e180b55d4883f6fda8756d63\",",
+									"      \"ccccb11b990be7d2961d0b0621a3227b\",",
+									"      \"328bbbe1acc410319f076f67e047639c\"",
+									"    ]",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MYSQL_QUERY"]
+					}
+				}
 			},
 			{
-				"webAddress": "/api/v1/alerts/create",
-				"aliases": ["/api/alerts/create"],
-				"logicHandler": "./src/api/alerts/create.js",
-				"acceptedMethod": "POST"
-			},
-			{
-				"webAddress": "/api/v1/alerts/delete",
-				"aliases": ["/api/alerts/delete"],
-				"logicHandler": "./src/api/alerts/delete.js",
-				"acceptedMethod": "DELETE"
+				"webAddress": "/api/v1/alerts/alert",
+				"aliases": ["/api/alerts/alert"],
+				"logicHandler": "./src/api/alerts/fetch.js",
+				"acceptedMethod": "GET",
+				"docs": {
+					"method": "GET",
+					"section": "Alerts",
+					"title": "Get Alert",
+					"description": "Fetch a previously created alert.",
+					"params": [
+						{
+							"name": "count",
+							"data_type": "int",
+							"required_status": "optional",
+							"description": "The number of images to list. Defaults to 20, maxes out at 100."
+						}
+					],
+					"examples": {
+						"body": {
+							"count": "3"
+						},
+						"request": [
+							"curl --request GET \\",
+							"     --url 'http://www.joshuas3.com/api/alerts/alert' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data count=3"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"count\": 3,",
+									"    \"ids\": [",
+									"      \"5a8b62f6e180b55d4883f6fda8756d63\",",
+									"      \"ccccb11b990be7d2961d0b0621a3227b\",",
+									"      \"328bbbe1acc410319f076f67e047639c\"",
+									"    ]",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MYSQL_QUERY"]
+					}
+				}
 			},
 			{
 				"webAddress": "/api/v1/alerts/list",
 				"aliases": ["/api/alerts/list"],
 				"logicHandler": "./src/api/alerts/list.js",
-				"acceptedMethod": "GET"
+				"acceptedMethod": "GET",
+				"docs": {
+					"method": "GET",
+					"section": "Alerts",
+					"title": "List Alerts",
+					"description": "List all previously created alerts.",
+					"params": [
+						{
+							"name": "count",
+							"data_type": "int",
+							"required_status": "optional",
+							"description": "The number of images to list. Defaults to 20, maxes out at 100."
+						}
+					],
+					"examples": {
+						"body": {
+							"count": "3"
+						},
+						"request": [
+							"curl --request GET \\",
+							"     --url 'http://www.joshuas3.com/api/alerts/list' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data count=3"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"count\": 3,",
+									"    \"ids\": [",
+									"      \"5a8b62f6e180b55d4883f6fda8756d63\",",
+									"      \"ccccb11b990be7d2961d0b0621a3227b\",",
+									"      \"328bbbe1acc410319f076f67e047639c\"",
+									"    ]",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MYSQL_QUERY"]
+					}
+				}
+			},
+			{
+				"webAddress": "/api/v1/alerts/alert",
+				"aliases": ["/api/alerts/alert"],
+				"logicHandler": "./src/api/alerts/create.js",
+				"acceptedMethod": "POST",
+				"docs": {
+					"method": "POST",
+					"section": "Alerts",
+					"title": "Create Alert",
+					"description": "Create an alert banner to be displayed at the top of the page. (This endpoint requires an elevated permission level, encoded in the Authorization header.)",
+					"params": [
+						{
+							"name": "count",
+							"data_type": "int",
+							"required_status": "optional",
+							"description": "The number of images to list. Defaults to 20, maxes out at 100."
+						}
+					],
+					"examples": {
+						"body": {
+							"count": "3"
+						},
+						"headers": {
+							"Authorization": "Bearer {{authToken}}"
+						},
+						"request": [
+							"curl --request POST \\",
+							"     --url 'http://www.joshuas3.com/api/alerts/alert' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data count=3"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"count\": 3,",
+									"    \"ids\": [",
+									"      \"5a8b62f6e180b55d4883f6fda8756d63\",",
+									"      \"ccccb11b990be7d2961d0b0621a3227b\",",
+									"      \"328bbbe1acc410319f076f67e047639c\"",
+									"    ]",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MYSQL_QUERY"]
+					}
+				}
+			},
+			{
+				"webAddress": "/api/v1/alerts/alert",
+				"aliases": ["/api/alerts/alert"],
+				"logicHandler": "./src/api/alerts/update.js",
+				"acceptedMethod": "PUT",
+				"docs": {
+					"method": "PUT",
+					"section": "Alerts",
+					"title": "Update Alert",
+					"description": "Update a previously created alert. (This endpoint requires an elevated permission level, encoded in the Authorization header.)",
+					"params": [
+						{
+							"name": "count",
+							"data_type": "int",
+							"required_status": "optional",
+							"description": "The number of images to list. Defaults to 20, maxes out at 100."
+						}
+					],
+					"examples": {
+						"body": {
+							"count": "3"
+						},
+						"request": [
+							"curl --request PUT \\",
+							"     --url 'http://www.joshuas3.com/api/alerts/alert' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data count=3"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"count\": 3,",
+									"    \"ids\": [",
+									"      \"5a8b62f6e180b55d4883f6fda8756d63\",",
+									"      \"ccccb11b990be7d2961d0b0621a3227b\",",
+									"      \"328bbbe1acc410319f076f67e047639c\"",
+									"    ]",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MYSQL_QUERY"]
+					}
+				}
+			},
+			{
+				"webAddress": "/api/v1/alerts/alert",
+				"aliases": ["/api/alerts/alert"],
+				"logicHandler": "./src/api/alerts/delete.js",
+				"acceptedMethod": "DELETE",
+				"docs": {
+					"method": "DELETE",
+					"section": "Alerts",
+					"title": "Delete Alert",
+					"description": "Delete a previously created alert banner. (This endpoint requires an elevated permission level, encoded in the Authorization header.)",
+					"params": [
+						{
+							"name": "count",
+							"data_type": "int",
+							"required_status": "optional",
+							"description": "The number of images to list. Defaults to 20, maxes out at 100."
+						}
+					],
+					"examples": {
+						"body": {
+							"count": "3"
+						},
+						"headers": {
+							"Authorization": "Bearer {{authToken}}"
+						},
+						"request": [
+							"curl --request DELETE \\",
+							"     --url 'http://www.joshuas3.com/api/alerts/alert' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data count=3"
+						],
+						"responses": [
+							{
+								"status": "200 OK",
+								"content": [
+									"{",
+									"  \"success\": true,",
+									"  \"status\": 200",
+									"  \"data\": {",
+									"    \"count\": 3,",
+									"    \"ids\": [",
+									"      \"5a8b62f6e180b55d4883f6fda8756d63\",",
+									"      \"ccccb11b990be7d2961d0b0621a3227b\",",
+									"      \"328bbbe1acc410319f076f67e047639c\"",
+									"    ]",
+									"  }",
+									"}"
+								]
+							}
+						],
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MYSQL_QUERY"]
+					}
+				}
 			},
 			{
 				"webAddress": "/api/v1/accounts/create",
@@ -341,15 +677,15 @@
 						},
 						"request": [
 							"curl --request POST \\",
-							"     --url 'http://www.joshuas3.com/api/media/image' \\",
-							"     --header 'content-type: application/x-www-form-urlencoded; boundary=----WebKitFormBoundary' \\",
-							"     --form 'verToken={{verToken}}' \\",
-							"     --form 'g-recaptcha-response={{g-recaptcha-response}}' \\",
-							"     --form 'displayName=John_Doe' \\",
-							"     --form 'password=correct horse battery staple' \\",
-							"     --form 'email=john.doe@anonymous.com' \\",
-							"     --form 'firstName=John' \\",
-							"     --form 'lastName=Doe'"
+							"     --url 'http://www.joshuas3.com/api/accounts/create' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data 'verToken={{verToken}}' \\",
+							"     --data 'g-recaptcha-response={{g-recaptcha-response}}' \\",
+							"     --data 'displayName=John_Doe' \\",
+							"     --data 'password=correct horse battery staple' \\",
+							"     --data 'email=john.doe@anonymous.com' \\",
+							"     --data 'firstName=John' \\",
+							"     --data 'lastName=Doe'"
 						],
 						"responses": [
 							{
@@ -362,7 +698,7 @@
 								]
 							}
 						],
-						"errors": ["ERR_MISSING_DISPLAYNAME", "ERR_MISSING_PASSWORD", "ERR_RECAPTCHA", "ERR_VERTOKEN", "ERR_USERNAME_TAKEN", "ERR_USERNAME_LONG",
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MISSING_DISPLAYNAME", "ERR_MISSING_PASSWORD", "ERR_RECAPTCHA", "ERR_VERTOKEN", "ERR_USERNAME_TAKEN", "ERR_USERNAME_LONG",
 							"ERR_USERNAME_SHORT", "ERR_USERNAME_INVALID", "ERR_INSECURE_PASSWORD", "ERR_MYSQL_QUERY"]
 					}
 				}
@@ -379,23 +715,29 @@
 					"description": "Login to a site account.",
 					"params": [
 						{
-							"name": "yeet",
+							"name": "username",
 							"data_type": "string",
-							"required_status": "optional",
-							"description": "param description"
+							"required_status": "required",
+							"description": "The account's username."
+						},
+						{
+							"name": "password",
+							"data_type": "string",
+							"required_status": "required",
+							"description": "The account's password."
 						}
 					],
 					"examples": {
 						"body": {
-							"Authorization": "Client ID"
-						},
-						"headers": {
-							"Authorization": "Client ID"
+							"username": "John_Doe",
+							"password": "<a href='https://xkcd.com/936/' target='_blank'>correct horse battery staple</a>"
 						},
 						"request": [
 							"curl --request POST \\",
-							"     --url 'http://www.joshuas3.com/api/media/image' \\",
-							"     --etc."
+							"     --url 'http://www.joshuas3.com/api/accounts/login' \\",
+							"     --header 'content-type: application/x-www-form-urlencoded' \\",
+							"     --data 'username=John_Doe' \\",
+							"     --data 'password=correct horse battery staple'"
 						],
 						"responses": [
 							{
@@ -408,7 +750,7 @@
 								]
 							}
 						],
-						"errors": ["ERR_MISSING_DISPLAYNAME", "ERR_MISSING_PASSWORD", "ERR_RECAPTCHA", "ERR_VERTOKEN", "ERR_USERNAME_TAKEN", "ERR_USERNAME_LONG",
+						"errors": ["ERR_INVALID_REQUEST", "ERR_MISSING_DISPLAYNAME", "ERR_MISSING_PASSWORD", "ERR_RECAPTCHA", "ERR_VERTOKEN", "ERR_USERNAME_TAKEN", "ERR_USERNAME_LONG",
 							"ERR_USERNAME_SHORT", "ERR_USERNAME_INVALID", "ERR_INSECURE_PASSWORD", "ERR_MYSQL_QUERY"]
 					}
 				}
