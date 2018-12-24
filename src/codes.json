@@ -1,0 +1,68 @@
+[
+	{
+		"status": 400,
+		"name": "ERR_INVALID_REQUEST",
+		"description": "The request method used is invalid.",
+		"userfriendly": "The request method used is invalid."
+	},
+	{
+		"status": 400,
+		"name": "ERR_MISSING_DISPLAYNAME",
+		"description": "displayName is required.",
+		"userfriendly": "A username is required."
+	},
+	{
+		"status": 400,
+		"name": "ERR_MISSING_PASSWORD",
+		"description": "password is required.",
+		"userfriendly": "A password is required."
+	},
+	{
+		"status": 401,
+		"name": "ERR_RECAPTCHA",
+		"description": "g-recaptcha-response is missing or invalid.",
+		"userfriendly": "Filling out the reCAPTCHA is required."
+	},
+	{
+		"status": 401,
+		"name": "ERR_VERTOKEN",
+		"description": "verToken is missing or invalid.",
+		"userfriendly": "An important authentication token is missing. Please refresh and try again."
+	},
+	{
+		"status": 409,
+		"name": "ERR_USERNAME_TAKEN",
+		"description": "The requested username has already been taken.",
+		"userfriendly": "The requested username has already been taken."
+	},
+	{
+		"status": 409,
+		"name": "ERR_USERNAME_LONG",
+		"description": "The requested username is too long.",
+		"userfriendly": "The requested username is too long."
+	},
+	{
+		"status": 409,
+		"name": "ERR_USERNAME_SHORT",
+		"description": "The requested username is too short.",
+		"userfriendly": "The requested username is too short."
+	},
+	{
+		"status": 409,
+		"name": "ERR_USERNAME_INVALID",
+		"description": "The requested username contains invalid characters.",
+		"userfriendly": "The requested username contains invalid characters."
+	},
+	{
+		"status": 409,
+		"name": "ERR_INSECURE_PASSWORD",
+		"description": "The input password's strength isn't good enough.",
+		"userfriendly": "The input password's strength isn't good enough."
+	},
+	{
+		"status": 500,
+		"name": "ERR_MYSQL_QUERY",
+		"description": "An internal server error has occurred while attempting a MySQL query.",
+		"userfriendly": "Something went wrong on our end. Please try again later."
+	}
+]
