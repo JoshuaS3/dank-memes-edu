@@ -1,0 +1,64 @@
+{
+	"js": {
+		"mime": "application/javascript",
+		"binary": false
+	},
+	"json": {
+		"mime": "application/json",
+		"binary": false
+	},
+	"xml": {
+		"mime": "application/xml",
+		"binary": false
+	},
+
+
+	"txt": {
+		"mime": "text/plain",
+		"binary": false
+	},
+	"html": {
+		"mime": "text/html",
+		"binary": false
+	},
+	"css": {
+		"mime": "text/html",
+		"binary": false
+	},
+	"css": {
+		"mime": "text/css",
+		"binary": false
+	},
+	"svg": {
+		"mime": "image/svg+xml",
+		"binary": false
+	},
+
+
+	"ico": {
+		"mime": "image/x-icon",
+		"binary": true
+	},
+	"jpeg": {
+		"mime": "image/jpeg",
+		"binary": true
+	},
+	"jpg": {
+		"mime": "image/jpeg",
+		"binary": true
+	},
+	"png": {
+		"mime": "image/png",
+		"binary": true
+	},
+
+
+	"pdf": {
+		"mime": "application/pdf",
+		"binary": true
+	},
+	"rar": {
+		"mime": "application/x-rar-compressed",
+		"binary": true
+	}
+}
