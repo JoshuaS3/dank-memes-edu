@@ -1,0 +1,23 @@
+[
+	{
+		"port": [8008],
+		"type": "API",
+		"apiEndpoints": "src/api"
+	},
+	{
+		"port": [8080],
+		"type": "static",
+		"staticFolder": "static",
+		"customAddresses": [
+			{
+				"webAddress": "/",
+				"localResponseFile": "html/index.html",
+				"fragments": {
+					"HEADER": "html/header.html",
+					"TOPBAR": "html/topbar.html",
+					"ALERTS": "html/alerts.html",
+				}
+			}
+		]
+	}
+]
