@@ -1,0 +1,23 @@
+[
+	{
+		"version": "v1",
+		"directory": "accounts",
+		"endpoints": [
+			{
+				"name": "account",
+				"handler": "Account.js",
+				"accepts": ["GET", "POST", "DELETE"]
+			},
+			{
+				"name": "state",
+				"handler": "State.js",
+				"accepts": ["GET", "POST"]
+			},
+			{
+				"name": "usernameavailable",
+				"handler": "UsernameAvailable.js",
+				"accepts": ["GET"]
+			}
+		]
+	}
+]

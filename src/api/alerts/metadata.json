@@ -1,0 +1,18 @@
+[
+	{
+		"version": "v1",
+		"directory": "alerts",
+		"endpoints": [
+			{
+				"name": "alert",
+				"handler": "Alert.js",
+				"accepts": ["GET", "POST", "DELETE", "PUT"]
+			},
+			{
+				"name": "list",
+				"handler": "List.js",
+				"accepts": ["GET"]
+			}
+		]
+	}
+]

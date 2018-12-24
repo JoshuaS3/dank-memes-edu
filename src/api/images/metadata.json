@@ -1,0 +1,18 @@
+[
+	{
+		"version": "v1",
+		"directory": "images",
+		"endpoints": [
+			{
+				"name": "image",
+				"handler": "Image.js",
+				"accepts": ["GET", "POST", "DELETE"]
+			},
+			{
+				"name": "list",
+				"handler": "List.js",
+				"accepts": ["GET"]
+			}
+		]
+	}
+]

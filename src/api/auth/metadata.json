@@ -1,0 +1,13 @@
+[
+	{
+		"version": "v1",
+		"directory": "auth",
+		"endpoints": [
+			{
+				"name": "csrf",
+				"handler": "CSRFToken.js",
+				"accepts": ["GET"]
+			}
+		]
+	}
+]

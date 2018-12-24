@@ -1,0 +1,18 @@
+[
+	{
+		"version": "v1",
+		"directory": "logging",
+		"endpoints": [
+			{
+				"name": "logs",
+				"handler": "Logs.js",
+				"accepts": ["GET"]
+			},
+			{
+				"name": "list",
+				"handler": "List.js",
+				"accepts": ["GET"]
+			}
+		]
+	}
+]

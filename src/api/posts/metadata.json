@@ -1,0 +1,18 @@
+[
+	{
+		"version": "v1",
+		"directory": "posts",
+		"endpoints": [
+			{
+				"name": "post",
+				"handler": "Post.js",
+				"accepts": ["GET", "POST", "DELETE", "PUT"]
+			},
+			{
+				"name": "rate",
+				"handler": "Rate.js",
+				"accepts": ["PUT"]
+			}
+		]
+	}
+]
