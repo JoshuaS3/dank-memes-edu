@@ -1,0 +1,8 @@
+[
+	"accounts/metadata.json",
+	"alerts/metadata.json",
+	"auth/metadata.json",
+	"images/metadata.json",
+	"logging/metadata.json",
+	"posts/metadata.json"
+]
