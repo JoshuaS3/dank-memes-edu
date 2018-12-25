@@ -1,13 +1,13 @@
 [
 	{
-		"port": [8008],
+		"port": 8008,
 		"type": "API",
-		"apiEndpoints": "src/api"
+		"apiEndpoints": "./src/api"
 	},
 	{
-		"port": [8080],
+		"port": 8080,
 		"type": "static",
-		"staticFolder": "static",
+		"staticFolder": "./static",
 		"customAddresses": [
 			{
 				"webAddress": "/",
@@ -15,7 +15,7 @@
 				"fragments": {
 					"HEADER": "html/header.html",
 					"TOPBAR": "html/topbar.html",
-					"ALERTS": "html/alerts.html",
+					"ALERTS": "html/alerts.html"
 				}
 			}
 		]
